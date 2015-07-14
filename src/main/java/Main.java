@@ -36,17 +36,7 @@ public class Main {
             ftp.enterLocalPassiveMode();
             ftp.setFileType(FTP.BINARY_FILE_TYPE);
 
-            System.out.println("********************* TEAM FOOD FTP CLIENT *********************");
-            System.out.println("1.  List Files and Folders");
-            System.out.println("2.  add more as we go...");
-            System.out.println("****************************************************************");
-            System.out.println();
-
-            if(reader.nextInt() == 1) {
-                commands.listFilesFolders(ftp);
-            } else {
-                System.out.println("Peace");
-            }
+           options();
 
         } catch (IOException ex) {
             System.out.println("Error: " + ex.getMessage());
@@ -60,6 +50,25 @@ public class Main {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    /**
+     * Moved options out so user can loop back to it after basic commands
+     */
+    public static void options() {
+        Scanner select = new Scanner(System.in);
+
+        System.out.println("********************* TEAM FOOD FTP CLIENT *********************");
+        System.out.println("1.  List Files and Folders");
+        System.out.println("2.  add more as we go...");
+        System.out.println("****************************************************************");
+        System.out.println();
+
+        if(select.nextInt() == 1) {
+            commands.listFilesFolders(ftp);
+        } else {
+            System.out.println("Peace");
         }
     }
 }
