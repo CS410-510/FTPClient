@@ -1,4 +1,6 @@
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import java.io.IOException;
@@ -17,6 +19,10 @@ public class Main {
      */
     public static void main(String[] args) {
 
+        ArgParser.initParser();
+        ArgParser.parse(args);
+
+        /*
         String server, user, pass;
         int port = 21;
 
@@ -61,5 +67,6 @@ public class Main {
                 e.printStackTrace();
             }
         }
+        */
     }
 }
