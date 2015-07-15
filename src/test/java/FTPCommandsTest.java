@@ -15,9 +15,9 @@ import static junit.framework.Assert.fail;
 public class FTPCommandsTest {
 
     FTPClient ftp = new FTPClient();
-    String server = null;
-    String user = null;
-    String pass = null;
+    String server = "52.25.152.38";
+    String user = "ftptestuser";
+    String pass = "password";
 
     /**
      * arbitrary like Main.java is set up.  We can adjust later -Ryan
