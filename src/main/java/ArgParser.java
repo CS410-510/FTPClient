@@ -1,7 +1,7 @@
 import org.apache.commons.cli.*;
 
 /**
- * Created by aaron on 7/13/15.
+ * Created by Aaron Nash on 7/13/15.
  */
 public class ArgParser {
     private static CommandLineParser parser = null;
@@ -15,18 +15,39 @@ public class ArgParser {
         help = new HelpFormatter();
         opsGrp = new OptionGroup();
 
+        Option connect = Option.builder("C").longOpt("connect").required(false).hasArg().optionalArg(false)
+                .argName("SERVER")
+                .desc("Begin or switch the connection context.").build();
+        Option delete = Option.builder("d").longOpt("delete").required(false).hasArg().optionalArg(false)
+                .argName("PATH")
+                .desc("Delete files or directories.").build();
+        Option get = Option.builder("g").longOpt("get").required(false).hasArg().optionalArg(false)
+                .argName("PATH")
+                .desc("Without -r, get a single file.").build();
+        Option list = Option.builder("l").longOpt("list").required(false).hasArg().optionalArg(false)
+                .argName("PATH")
+                .desc("List files and directories.").build();
+        Option put = Option.builder("p").longOpt("put").required(false).hasArg().optionalArg(false)
+                .argName("PATH")
+                .desc("Put a single file.").build();
+        Option copy = Option.builder("c").longOpt("copy").required(false).numberOfArgs(2).optionalArg(false)
+                .argName("PATHS")
+                .desc("Copy a directory on the server, use with -rR.").build();
+
+        opsGrp.setRequired(false);
+        opsGrp.addOption(delete);
+        opsGrp.addOption(get);
+        opsGrp.addOption(list);
+        opsGrp.addOption(put);
+        opsGrp.addOption(copy);
+
+        options.addOptionGroup(opsGrp);
+        options.addOption(connect);
         options.addOption("h", "help", false, "Print this help information.");
-        options.addOption("C", "connect", true, "Begin or switch the connection context.");
         options.addOption("N", "disconnect", false, "Disconnect from the current connection context.");
         options.addOption("m", "multiple", false, "Used with -g or -p - get or put multiple files.");
         options.addOption("r", "remote", false, "Source is the remote server.");
         options.addOption("R", "recursive", false, "Where allowed, target is a directory.");
-        options.addOption("c", "copy", true, "Copy a directory on the remote server, use with -rR.");
-        options.addOption("d", "delete", true, "Delete files or directories.");
-        options.addOption("g", "get", true, "Without -r, get a single file.");
-        options.addOption("l", "list", true, "List files and directories.");
-        options.addOption("p", "put", true, "Put a single file.");
-
 
     }
 
@@ -36,7 +57,7 @@ public class ArgParser {
 
             if (line.getArgList().size() <= 0 || line.hasOption('h') || line.hasOption("help")) {
                 help = new HelpFormatter();
-                help.printHelp("FTPClient", options, true);
+                help.printHelp("FTPClient", options);
             }
         }
         catch(ParseException e) {
