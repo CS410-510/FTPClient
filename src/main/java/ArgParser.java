@@ -1,4 +1,5 @@
 import org.apache.commons.cli.*;
+import org.apache.commons.net.ftp.FTPClient;
 
 /**
  * Created by Aaron Nash on 7/13/15.
@@ -51,13 +52,19 @@ public class ArgParser {
 
     }
 
-    public static void parse(String[] args) {
+    public static void parse(String[] args, FTPClient client) {
+        FTPCommands commands = new FTPCommands();
+
         try {
             CommandLine line = parser.parse(options, args);
 
-            if (line.getArgList().size() <= 0 || line.hasOption('h') || line.hasOption("help")) {
+            if (line.hasOption('h') || line.hasOption("help")) {
                 help = new HelpFormatter();
                 help.printHelp("FTPClient", options);
+            }
+
+            if (line.hasOption("l") || line.hasOption("list")) {
+                commands.listFilesFolders(client);
             }
         }
         catch(ParseException e) {

@@ -27,7 +27,7 @@ public class FTPCommands {
         //iterate through to get files
         System.out.println();
         //"Pretty Printing"  subject to change
-        System.out.println("Type\t\t" + "Name\t\t\t\t\t" + "Size");
+        System.out.println("Type\t\t" + "Name\t\t\t" + "Size");
         for (FTPFile file : files) {
             String details = file.getName();
             if (file.isDirectory()) {
