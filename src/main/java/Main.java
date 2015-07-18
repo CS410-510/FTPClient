@@ -1,7 +1,4 @@
-
-import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
-import java.io.IOException;
 
 public class Main {
 
@@ -15,34 +12,9 @@ public class Main {
      */
     public static void main(String[] args) {
 
-        //server, user, pass for AWS server
-        String server = "52.25.152.38";
-        String user = "ftptestuser";
-        String pass = "password";
+        ArgParser.initParser();
+        FTPDispatcher dispatcher = new FTPDispatcher();
+        dispatcher.dispatch(args, ftp);
 
-        int port = 21;
-
-        try {
-            ftp.connect(server, port);
-            ftp.login(user, pass);
-            ftp.enterLocalPassiveMode();
-            ftp.setFileType(FTP.BINARY_FILE_TYPE);
-
-            ArgParser.initParser();
-            ArgParser.parse(args, ftp);
-
-        } catch (IOException ex) {
-            System.out.println("Error: " + ex.getMessage());
-            ex.printStackTrace();
-        } finally {
-            try {
-                if (ftp.isConnected()) {
-                    ftp.logout();
-                    ftp.disconnect();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }

@@ -7,13 +7,11 @@ import org.apache.commons.net.ftp.FTPClient;
 public class ArgParser {
     private static CommandLineParser parser = null;
     private static Options options = null;
-    private static HelpFormatter help = null;
     private static OptionGroup opsGrp = null;
 
     public static void initParser() {
         parser = new DefaultParser();
         options = new Options();
-        help = new HelpFormatter();
         opsGrp = new OptionGroup();
 
         Option connect = Option.builder("C").longOpt("connect").required(false).hasArg().optionalArg(false)
@@ -52,20 +50,11 @@ public class ArgParser {
 
     }
 
-    public static void parse(String[] args, FTPClient client) {
-        FTPCommands commands = new FTPCommands();
+    public static CommandLine parse(String[] args) {
+        CommandLine line = null;
 
         try {
-            CommandLine line = parser.parse(options, args);
-
-            if (line.hasOption('h') || line.hasOption("help")) {
-                help = new HelpFormatter();
-                help.printHelp("FTPClient", options);
-            }
-
-            if (line.hasOption("l") || line.hasOption("list")) {
-                commands.listFilesFolders(client);
-            }
+            line = parser.parse(options, args);
         }
         catch(ParseException e) {
             System.out.println("Parse error occurred. " + e.getMessage());
@@ -73,5 +62,11 @@ public class ArgParser {
         catch(NullPointerException e) {
             System.out.println("No parser exists.");
         }
+
+        return line;
+    }
+
+    public static Options options() {
+        return options;
     }
 }
