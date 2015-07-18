@@ -1,15 +1,11 @@
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import java.io.IOException;
-import java.util.Scanner;
 
 public class Main {
 
     static FTPClient ftp = new FTPClient();
-    static FTPCommands commands = new FTPCommands();
 
     /**
      * This is basically how I had my main set up
@@ -19,22 +15,12 @@ public class Main {
      */
     public static void main(String[] args) {
 
-        ArgParser.initParser();
-        ArgParser.parse(args);
+        //server, user, pass for AWS server
+        String server = "52.25.152.38";
+        String user = "ftptestuser";
+        String pass = "password";
 
-        /*
-        String server, user, pass;
         int port = 21;
-
-        Scanner reader = new Scanner(System.in);
-        System.out.print("Enter server name: ");
-        server = reader.nextLine();
-
-        System.out.print("Username: ");
-        user = reader.nextLine();
-
-        System.out.print("Password: ");
-        pass = reader.nextLine();
 
         try {
             ftp.connect(server, port);
@@ -42,7 +28,8 @@ public class Main {
             ftp.enterLocalPassiveMode();
             ftp.setFileType(FTP.BINARY_FILE_TYPE);
 
-           options();
+            ArgParser.initParser();
+            ArgParser.parse(args, ftp);
 
         } catch (IOException ex) {
             System.out.println("Error: " + ex.getMessage());
@@ -56,26 +43,6 @@ public class Main {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        */
-    }
-
-    /**
-     * Moved options out so user can loop back to it after basic commands
-     */
-    public static void options() {
-        Scanner select = new Scanner(System.in);
-
-        System.out.println("********************* TEAM FOOD FTP CLIENT *********************");
-        System.out.println("1.  List Files and Folders");
-        System.out.println("2.  add more as we go...");
-        System.out.println("****************************************************************");
-        System.out.println();
-
-        if(select.nextInt() == 1) {
-            commands.listFilesFolders(ftp);
-        } else {
-            System.out.println("Peace");
         }
     }
 }
