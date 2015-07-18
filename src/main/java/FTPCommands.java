@@ -39,6 +39,9 @@ public class FTPCommands {
             // can also easily add a Date to it
             details += "\t\t" + file.getSize();
             System.out.println(details);
+            System.out.println();
         }
+        //list options after listing files/folders
+        Main.options();
     }
 }
