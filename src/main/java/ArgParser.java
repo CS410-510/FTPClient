@@ -66,6 +66,10 @@ public class ArgParser {
             if (line.hasOption("l") || line.hasOption("list")) {
                 commands.listFilesFolders(client);
             }
+
+            if (line.hasOption('g') || line.hasOption("get")) {
+                commands.getRemoteFile(client, line.getOptionValue('g'));
+            }
         }
         catch(ParseException e) {
             System.out.println("Parse error occurred. " + e.getMessage());

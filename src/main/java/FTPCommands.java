@@ -1,13 +1,17 @@
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Scanner;
 
 /**
  * We can put all the commands that will be available in this
  * class that way it's easy to keep track of and update.
  *
  * @author Ryan
+ *         Eric
  */
 public class FTPCommands {
 
@@ -40,6 +44,22 @@ public class FTPCommands {
             details += "\t\t" + file.getSize();
             System.out.println(details);
             System.out.println();
+        }
+    }
+
+    /**
+     * Get a file from the remote server and place it in the current local working directory.
+     * The location where the retrieved file ends up can be changed if needed. Maybe we could
+     * provide the option to specify a location.
+     */
+    public void getRemoteFile(FTPClient ftp, String file) {
+        try {
+            OutputStream dest = new FileOutputStream("./" + file);
+            ftp.retrieveFile(file, dest);
+            System.out.println(file + " has been placed in your current working directory");
+        } catch (IOException e) {
+            System.out.println("Error retrieving file");
+            e.printStackTrace();
         }
     }
 }
