@@ -41,7 +41,5 @@ public class FTPCommands {
             System.out.println(details);
             System.out.println();
         }
-        //list options after listing files/folders
-        Main.options();
     }
 }
