@@ -39,6 +39,16 @@ public class FTPCommandsTest {
     }
 
     /**
+     * Assert the client is connected to the server after connecting
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testIsConnected() throws Exception {
+        assertTrue("Client is not connected", ftp.isConnected());
+    }
+
+    /**
      * Just show what is a folder and file listed in the Remote directory
      *
      * @throws Exception

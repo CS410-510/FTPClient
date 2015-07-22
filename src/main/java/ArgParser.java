@@ -1,5 +1,4 @@
 import org.apache.commons.cli.*;
-import org.apache.commons.net.ftp.FTPClient;
 
 /**
  * Created by Aaron Nash on 7/13/15.
