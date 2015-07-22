@@ -15,6 +15,5 @@ public class Main {
         ArgParser.initParser();
         FTPDispatcher dispatcher = new FTPDispatcher();
         dispatcher.dispatch(args, ftp);
-
     }
 }

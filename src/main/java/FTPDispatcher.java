@@ -37,6 +37,10 @@ public class FTPDispatcher {
                 commands.listFilesFolders(ftp);
             }
 
+            if (line.hasOption('g') || line.hasOption("get")) {
+                commands.getRemoteFile(ftp, line.getOptionValue('g'));
+            }
+
             commands.exit(ftp);
         }
     }
