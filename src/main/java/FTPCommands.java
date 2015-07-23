@@ -33,7 +33,6 @@ public class FTPCommands {
             ftp.login(username, password);
             ftp.enterLocalPassiveMode();
             ftp.setFileType(FTP.BINARY_FILE_TYPE);
-            ftp.setFileTransferMode(FTP.BINARY_FILE_TYPE);
         }
         catch (IOException e) {
             System.out.println("Error: " + e.getMessage());
