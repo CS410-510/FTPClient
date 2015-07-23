@@ -4,8 +4,8 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
+
+import static junit.framework.Assert.*;
 
 /**
  * Tests for FTPCommands class
@@ -66,6 +66,24 @@ public class FTPCommandsTest {
                 System.out.println("File Found");
             } else {
                 fail("Something else found");
+            }
+        }
+    }
+
+    /**
+     * Assert the file put on the server is really there
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testPutFile() throws Exception {
+        FTPFile[] files;
+        files = ftp.listFiles();
+        for (FTPFile file: files) {
+            if(file.getName().equals("putGoodTest.txt")) {
+                assertTrue("File exists", file.isFile());
+            } else {
+                assertTrue("Does not exist", file.isFile());
             }
         }
     }

@@ -2,10 +2,7 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.Console;
-import java.io.OutputStream;
+import java.io.*;
 
 /**
  * We can put all the commands that will be available in this
@@ -89,6 +86,23 @@ public class FTPCommands {
             System.out.println(file + " has been placed in your current working directory");
         } catch (IOException e) {
             System.out.println("Error retrieving file");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Put a file from working directory to the remote server
+     *
+     * @param ftp connection assumed
+     * @param file argument passed in from command line
+     */
+    public void putRemoteFile(FTPClient ftp, String file) {
+        try {
+            InputStream local = new FileInputStream(file);
+            ftp.storeFile(file,local);
+            System.out.println(file + " upload complete");
+            local.close();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
