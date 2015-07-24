@@ -18,3 +18,4 @@ FTPClient.iml
 
 # Maven generation ignores
 target/
+dependency-reduced-pom.xml
