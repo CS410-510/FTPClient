@@ -17,7 +17,7 @@ public class FTPDispatcher {
 
         CommandLine line = ArgParser.parse(args);
 
-        if (args.length <= 0 || line.hasOption('h') || line.hasOption("help")) {
+        if (args.length <= 0 || line == null || line.hasOption('h') || line.hasOption("help")) {
             // determine whether or not to print usage/help
 
             HelpFormatter help = new HelpFormatter();
