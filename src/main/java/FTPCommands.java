@@ -3,6 +3,7 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.*;
+import java.util.Collection;
 
 /**
  * We can put all the commands that will be available in this
@@ -109,6 +110,19 @@ public class FTPCommands {
             System.out.println(file.getName() + " upload complete");
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Wrapper for putRemoteFile that allows for putting multiple files
+     * given a String array of filepaths.
+     *
+     * @param ftp connection assumed
+     * @param filepaths argument array passed in from command line
+     */
+    public void putRemoteFile(FTPClient ftp, String... filepaths) {
+        for (String path : filepaths) {
+            putRemoteFile(ftp, path);
         }
     }
 

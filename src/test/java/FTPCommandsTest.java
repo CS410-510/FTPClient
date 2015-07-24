@@ -9,6 +9,9 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static junit.framework.Assert.*;
 
@@ -24,12 +27,14 @@ public class FTPCommandsTest {
     String server = "52.25.152.38";
     String user = "ftptestuser";
     String pass = "password";
+    FTPCommands commands = new FTPCommands();
+
 
     /**
      * Added this rule to let us use temporary files during tests that are
      * automatically cleaned up after test completion.
      */
-    @Rule
+    @Rule   // Needs to be public
     public TemporaryFolder folder = new TemporaryFolder();
 
     /**
@@ -179,8 +184,6 @@ public class FTPCommandsTest {
     @Test
     public void testPutOverwritesFileOnServer() throws Exception {
         File testfile = makeTestFile("hey! apple!");
-
-        FTPCommands commands = new FTPCommands();
         commands.putRemoteFile(ftp, testfile.getPath());
 
         appendToFile(testfile, "hey! banana!");
@@ -189,5 +192,33 @@ public class FTPCommandsTest {
         File found = folder.newFile();
         ftp.retrieveFile(testfile.getName(), new FileOutputStream(found));
         assertTrue("files don't match!", FileUtils.contentEquals(testfile, found));
+    }
+
+    /**
+     * This test checks if putRemoteFile can upload multiple files to the
+     * server.
+     *
+     * @throws Exception passed up from helper methods
+     */
+    @Test
+    public void testPutMultipleFilesOnServer() throws Exception {
+        ArrayList<File> files = new ArrayList<>();
+        for (int i = 1; i <= 5; ++i) {
+            files.add(makeTestFile("testfile #" + String.valueOf(i)));
+        }
+
+        // Take the files collection, map each file to its path, collect it
+        // as a new list, convert the new list to a String array, and pass the array
+        // as an arg to putRemoteFile. Mimicking the use of multiple-arg options,
+        // don't worry if this looks bananas.
+        commands.putRemoteFile(ftp, files.stream()
+                                         .map(f -> f.getPath())
+                                         .collect(Collectors.toList())
+                                         .toArray(new String[files.size()]));
+
+        for (File file : files) {
+            assertTrue("file not found", findFileOnRemote(file.getName()));
+            assertTrue("file not deleted", ftp.deleteFile(file.getName()));
+        }
     }
 }
