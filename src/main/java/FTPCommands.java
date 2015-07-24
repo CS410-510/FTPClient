@@ -94,14 +94,19 @@ public class FTPCommands {
      * Put a file from working directory to the remote server
      *
      * @param ftp connection assumed
-     * @param file argument passed in from command line
+     * @param filepath argument passed in from command line
      */
-    public void putRemoteFile(FTPClient ftp, String file) {
-        try {
-            InputStream local = new FileInputStream(file);
-            ftp.storeFile(file,local);
-            System.out.println(file + " upload complete");
-            local.close();
+    public void putRemoteFile(FTPClient ftp, String filepath) {
+        // Switched to using File for work instead of filename string.
+        // Avoids failure when string provided is a full path.
+        File file = new File(filepath);
+
+        // Switched to try-with-resources, autocloses when done w/ stream
+        try (InputStream local = new FileInputStream(file)) {
+            // Silent overwrite if file already exists on server. Maybe
+            // change later?
+            ftp.storeFile(file.getName(), local);
+            System.out.println(file.getName() + " upload complete");
         } catch (IOException e) {
             e.printStackTrace();
         }
