@@ -25,7 +25,8 @@ public class ArgParser {
         Option list = Option.builder("l").longOpt("list").required(false).hasArg().optionalArg(false)
                 .argName("PATH")
                 .desc("List files and directories.").build();
-        Option put = Option.builder("p").longOpt("put").required(false).hasArg().optionalArg(false)
+        // Using hasArgs instead of hasArg to specify option can have multiple args.
+        Option put = Option.builder("p").longOpt("put").required(false).hasArgs().optionalArg(false)
                 .argName("PATH")
                 .desc("Put a single file.").build();
         Option copy = Option.builder("c").longOpt("copy").required(false).numberOfArgs(2).optionalArg(false)

@@ -42,7 +42,7 @@ public class FTPDispatcher {
 
             if (line.hasOption('p') || line.hasOption("put")) {
                 // handle putting a file on remote
-                commands.putRemoteFile(ftp,line.getOptionValue('p'));
+                commands.putRemoteFile(ftp,line.getOptionValues('p'));
             }
 
             commands.exit(ftp);
