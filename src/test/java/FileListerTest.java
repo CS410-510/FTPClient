@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+
 import static org.junit.Assert.assertTrue;
 
 import static junit.framework.Assert.fail;
@@ -29,7 +31,6 @@ public class FileListerTest {
     String server = "52.25.152.38";
     String user = "ftptestuser";
     String pass = "password";
-    FTPCommands commands = new FTPCommands();
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -81,19 +82,31 @@ public class FileListerTest {
         }
     }
 
+    /**
+     * This test checks if the FileLister can print local files.
+     *
+     * @throws Exception
+     */
     @Test
     public void testCanPrintLocalFiles() throws Exception {
+        ArrayList<File> fileList = new ArrayList<>();
         for (int i = 0; i < 4; ++i) {
-            makeTestFile(String.valueOf(i));
+            fileList.add(makeTestFile(String.valueOf(i)));
         }
         folder.newFolder("testdir");
         folder.newFolder("whoodir");
 
         String files = lister.listFilesAndDirs(folder.getRoot());
 
+        for (File file : fileList) {
+            assertTrue("can't find file", files.contains(file.getName()));
+        }
         assertTrue("directories should exist", files.contains("testdir/") && files.contains("whoodir/"));
     }
 
+    /**
+     * This test checks if the FileLister can print remote files.
+     */
     @Test
     public void testCanPrintRemoteFiles() {
         String files = null;
@@ -103,6 +116,6 @@ public class FileListerTest {
             fail("shouldn't fail here");
         }
 
-        System.err.print(files);
+        assertTrue("remote directory should exist", files.contains("for_testing"));
     }
 }
