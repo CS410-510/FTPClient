@@ -89,24 +89,6 @@ public class FTPCommandsTest {
     }
 
     /**
-     * Assert the file put on the server is really there
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testPutFile() throws Exception {
-        FTPFile[] files;
-        files = ftp.listFiles();
-        for (FTPFile file: files) {
-            if(file.getName().equals("putGoodTest.txt")) {
-                assertTrue("File exists", file.isFile());
-            } else {
-                assertTrue("Does not exist", file.isFile());
-            }
-        }
-    }
-
-    /**
      * Helper method, makes a test file using the text passed in as an arg.
      * @param text contents for file
      * @return file with contents
