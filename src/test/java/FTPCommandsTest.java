@@ -192,6 +192,7 @@ public class FTPCommandsTest {
         File found = folder.newFile();
         ftp.retrieveFile(testfile.getName(), new FileOutputStream(found));
         assertTrue("files don't match!", FileUtils.contentEquals(testfile, found));
+        assertTrue("file not deleted", ftp.deleteFile(testfile.getName()));
     }
 
     /**
