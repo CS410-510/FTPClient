@@ -1,6 +1,3 @@
-/**
- * Created by serge on 7/24/15.
- */
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.net.ftp.FTPFile;
@@ -9,7 +6,13 @@ import java.io.File;
 import java.util.Collection;
 
 /**
- * Set up as a singleton, use getInstance() to get a reference to it.
+ * The FileLister uses a collection of Files or array of FTPFiles and uses them
+ * to construct a pretty-printed String of the Files/FTPFiles contained within.
+ *
+ * The FileLister is set up as a singleton, use getInstance() to get a reference to it.
+ * To use easily, you can use something like:
+ *
+ * String output = FileLister.getInstance().listFilesAndDirs([some_collection]);
  *
  * @author Sergio Garcia
  */
@@ -44,12 +47,10 @@ public class FileLister {
                                                             TrueFileFilter.INSTANCE,
                                                             TrueFileFilter.INSTANCE);
 
-        StringBuilder sb = new StringBuilder(directory.getParent() + nl + ".." + nl);
-        String name;
+        StringBuilder sb = new StringBuilder();
+
         for( File file : files ) {
-            name = file.getName();
-            sb.append((file.isDirectory() && name.equals(directory.getName())
-                      ? "." : (name + (file.isDirectory() ? "/" : ""))) + nl);
+            sb.append(file.getName()).append((file.isDirectory() ? "/" : "")).append(nl);
         }
 
         return new String(sb);
@@ -57,16 +58,15 @@ public class FileLister {
 
     /**
      * This method returns the contents of a remote directory in string format.
+     *
      * @param files an array of FTPFiles
      * @return the contents of the directory as a string
      */
     public String listFilesAndDirs(FTPFile[] files) {
         StringBuilder sb = new StringBuilder();
-        String name;
 
         for( FTPFile file : files ) {
-            name = file.getName();
-            sb.append(name + (file.isDirectory() ? "/" : "") + nl);
+            sb.append(file.getName()).append((file.isDirectory() ? "/" : "")).append(nl);
         }
 
         return new String(sb);

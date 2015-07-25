@@ -1,7 +1,3 @@
-/**
- * Created by serge on 7/24/15.
- */
-
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.junit.After;
