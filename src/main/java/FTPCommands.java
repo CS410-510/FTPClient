@@ -104,8 +104,7 @@ public class FTPCommands {
 
         // Switched to try-with-resources, autocloses when done w/ stream
         try (InputStream local = new FileInputStream(file)) {
-            // Silent overwrite if file already exists on server. Maybe
-            // change later?
+            // TODO: Silent overwrite if file already exists on server. Maybe change later?
             ftp.storeFile(file.getName(), local);
             System.out.println(file.getName() + " upload complete");
         } catch (IOException e) {
@@ -127,6 +126,27 @@ public class FTPCommands {
     }
 
     /**
+     * Create the specified directory on the FTP server. Some ftp servers
+     * do not understand complex paths, so this command will not create all
+     * the nonexistent sub-directories on the way to the target directory. This
+     * command should be used to create all non-existing sub-directories one by
+     * one before attempting to reference the target directory with a relative
+     * path.
+     *
+     * @param ftp connection assumed
+     * @param filepath argument passed from command line
+     */
+    public void createRemoteDirectory(FTPClient ftp, String filepath) {
+        try {
+            ftp.makeDirectory(filepath);
+        } catch (IOException e) {
+            System.out.println();
+            e.printStackTrace();
+        }
+        System.out.println("Success");
+    }
+
+    /**
      * Perform logoff and disconnect functions
      */
     public void exit(FTPClient ftp) {
@@ -138,7 +158,6 @@ public class FTPCommands {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            exit(ftp);
         }
     }
 }

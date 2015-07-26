@@ -31,18 +31,30 @@ public class FTPDispatcher {
             }
 
             if (line.hasOption("l") || line.hasOption("list")) {
+                // TODO: specify use with -r option
                 // handle option to list files
                 commands.listFilesFolders(ftp);
             }
 
             if (line.hasOption('g') || line.hasOption("get")) {
+                // TODO: specify use with -r option
                 // handle getting a file on remote
                 commands.getRemoteFile(ftp, line.getOptionValue('g'));
             }
 
             if (line.hasOption('p') || line.hasOption("put")) {
+                // TODO: specify use with -r option
                 // handle putting a file on remote
                 commands.putRemoteFile(ftp,line.getOptionValues('p'));
+            }
+
+            if (line.hasOption('i') || line.hasOption("dir")) {
+                if (line.hasOption('r') || line.hasOption("remote")) {
+                    // create directory on the ftp server
+                    commands.createRemoteDirectory(ftp, line.getOptionValue('i'));
+                } else {
+                    // TODO: implement commands.createLocalDirectory()
+                }
             }
 
             commands.exit(ftp);
