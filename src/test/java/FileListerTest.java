@@ -94,8 +94,6 @@ public class FileListerTest {
 
         String files = lister.listFilesAndDirs(folder.getRoot());
 
-        System.err.println(files);
-
         for (File file : fileList) {
             assertTrue("can't find file", files.contains(file.getName()));
         }
@@ -113,8 +111,6 @@ public class FileListerTest {
         } catch (IOException e) {
             fail("shouldn't fail here");
         }
-
-        System.err.println(files);
 
         assertTrue("remote directory should exist", files.contains("for_testing"));
     }
