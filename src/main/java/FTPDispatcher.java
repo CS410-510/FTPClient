@@ -35,6 +35,12 @@ public class FTPDispatcher {
                 // handle option to list files
 
                 commands.listFilesFolders(ftp);
+                if (line.hasOption("L") || line.hasOption("local")) {
+                    // TODO: local version of command
+                } else {
+                    // handle option to list remote files
+                    commands.listFilesFolders(ftp);
+                }
             }
 
             if (line.hasOption('g') || line.hasOption("get")) {
