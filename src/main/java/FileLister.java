@@ -23,6 +23,7 @@ public class FileLister {
     private static FileLister instance;
     private static String nl;
     private static SimpleDateFormat dateFormatter;
+    private static int sizepadding;
 
     // Keep this constructor private to avoid unnecessary instantiation.
     private FileLister() {}
@@ -38,8 +39,21 @@ public class FileLister {
             instance = new FileLister();
             nl = System.lineSeparator();
             dateFormatter = new SimpleDateFormat("M/d/yyyy HH:mm");
+            sizepadding = 12;
         }
         return instance;
+    }
+
+    /**
+     * This method takes a string and formats it as an n-length
+     * string with spaces as left padding.
+     *
+     * @param s a string
+     * @param n length of padded string
+     * @return a left-padded string containing s
+     */
+    private String padLeft(String s, int n) {
+        return String.format("%1$" + n + "s", s);
     }
 
     /**
@@ -57,6 +71,10 @@ public class FileLister {
         sb.append(file.canRead() ? "r" : "-");
         sb.append(file.canWrite() ? "w" : "-");
         sb.append(file.canExecute() ? "x" : "-");
+        sb.append("    ");
+
+        // Add the filesize.
+        sb.append(padLeft(FileUtils.byteCountToDisplaySize(file.length()), sizepadding));
         sb.append("    ");
 
         // Appending last-modified timestamp
@@ -79,11 +97,15 @@ public class FileLister {
         // Start building permissions.
         sb.append(file.isDirectory() ? "d" : "-");
         sb.append(file.hasPermission(FTPFile.USER_ACCESS, FTPFile.READ_PERMISSION)
-                  ? "r" : "-");
+                ? "r" : "-");
         sb.append(file.hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION)
                   ? "w" : "-");
         sb.append(file.hasPermission(FTPFile.USER_ACCESS, FTPFile.EXECUTE_PERMISSION)
                   ? "x" : "-");
+        sb.append("    ");
+
+        // Add the filesize.
+        sb.append(padLeft(FileUtils.byteCountToDisplaySize(file.getSize()), sizepadding));
         sb.append("    ");
 
         // Appending the last-modified date to the current string.
