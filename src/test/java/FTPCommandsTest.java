@@ -10,6 +10,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -90,6 +91,7 @@ public class FTPCommandsTest {
 
     /**
      * Helper method, makes a test file using the text passed in as an arg.
+     *
      * @param text contents for file
      * @return file with contents
      * @throws IOException if an issue opening file is encountered
@@ -107,6 +109,7 @@ public class FTPCommandsTest {
 
     /**
      * Helper method, appends a new line to a currently existing file
+     *
      * @param file file to add line to
      * @param text text of new line
      */
@@ -123,20 +126,58 @@ public class FTPCommandsTest {
      * on the server.
      *
      * @param filename name of file to find
-     * @return true if found, false otherwise
+     * @return the file information if found, otherwise null
      * @throws IOException if there's an issue on the server side
      */
-    private boolean findFileOnRemote(String filename) throws IOException {
+    private FTPFile findFileOnRemote(String filename) throws IOException {
         FTPFile[] files = ftp.listFiles(filename);
 
         for (FTPFile f : files) {
             if (f.getName().equals(filename)) {
-                return true;
+                return f;
             }
         }
-        return false;
+        return null;
     }
 
+    /**
+     * Helper method, this finds a directory whose name matches the arg
+     * on the server.
+     *
+     * @param pathname name of directory to find
+     * @return the file information if found, otherwise null
+     * @throws IOException if there's an issue on the server side
+     */
+    private FTPFile findDirectoryOnRemote(String pathname) throws IOException {
+        FTPFile[] files = ftp.listDirectories();
+
+        for (FTPFile f : files) {
+            if (f.getName().equals(pathname)) {
+                return f;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Helper method, this finds a directory whose name matches the arg
+     * on the server.
+     *
+     * @param pathname name of directory to find
+     * @param parent pathname of the containing parent directory
+     * @return the file information if found, otherwise null
+     * @throws IOException if there's an issue on the server side
+     */
+    private FTPFile findDirectoryOnRemote(String pathname, String parent) throws IOException {
+        FTPFile[] files = ftp.listDirectories(parent);
+
+        for (FTPFile f : files) {
+            if (f.getName().equals(pathname)) {
+                return f;
+            }
+        }
+        return null;
+    }
 
     /**
      * This test tries to put a new file on the server using a filepath.
@@ -151,7 +192,7 @@ public class FTPCommandsTest {
 
         FTPCommands commands = new FTPCommands();
         commands.putRemoteFile(ftp, testfile.getPath());
-        assertTrue("file not found", findFileOnRemote(testfile.getName()));
+        assertNotNull("file not found", findFileOnRemote(testfile.getName()));
         assertTrue("file not deleted", ftp.deleteFile(testfile.getName()));
     }
 
@@ -195,13 +236,77 @@ public class FTPCommandsTest {
         // as an arg to putRemoteFile. Mimicking the use of multiple-arg options,
         // don't worry if this looks bananas.
         commands.putRemoteFile(ftp, files.stream()
-                                         .map(f -> f.getPath())
-                                         .collect(Collectors.toList())
-                                         .toArray(new String[files.size()]));
+                .map(f -> f.getPath())
+                .collect(Collectors.toList())
+                .toArray(new String[files.size()]));
 
         for (File file : files) {
-            assertTrue("file not found", findFileOnRemote(file.getName()));
+            assertNotNull("file not found", findFileOnRemote(file.getName()));
             assertTrue("file not deleted", ftp.deleteFile(file.getName()));
         }
+    }
+
+    /**
+     * Tests whether a single directory is created in the home directory.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testSingleSubdirectory() throws Exception {
+        String target = "test_sub_dir";
+        FTPFile result;
+
+        commands.createRemoteDirectory(ftp, target);
+
+        result = findDirectoryOnRemote(target);
+
+        assertNotNull("'" + target + "' was not found on the server", result);
+        assertTrue("'" + target + "' is not a directory", result.isDirectory());
+        assertTrue("'" + target + "' was not deleted from server", ftp.removeDirectory(target));
+    }
+
+    /**
+     * Tests that a subdirectory can be created inside an existing subdirectory.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testExistingSubdirectory() throws Exception {
+        String parent = "parent";
+        String child = "child";
+        String path = parent + "/" + child;
+        FTPFile result;
+
+        commands.createRemoteDirectory(ftp, parent);
+        commands.createRemoteDirectory(ftp, path);
+
+        result = findDirectoryOnRemote(child, parent);
+
+        assertNotNull("'" + path + "' was not found on the server", result);
+        assertTrue("'" + path + "' is not a directory", result.isDirectory());
+        assertTrue("'" + path + "' was not deleted from server", ftp.removeDirectory(path));
+        assertTrue("'" + path + "' was not deleted from server", ftp.removeDirectory(parent));
+    }
+
+    /**
+     * Confirms that a subdirectory of a non-existing directory does not get created
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testNoOrphanSubdirectories() throws Exception {
+        String parent = "parent";
+        String child = "child";
+        String path = parent + "/" + child;
+        FTPFile presult;
+        FTPFile cresult;
+
+        commands.createRemoteDirectory(ftp, path);
+
+        presult = findDirectoryOnRemote(parent);
+        cresult = findDirectoryOnRemote(child, parent);
+
+        assertNull("'" + parent + "' was created", presult);
+        assertNull("'" + path + "' was created", cresult);
     }
 }
