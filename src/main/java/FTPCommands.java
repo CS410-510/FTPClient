@@ -94,7 +94,10 @@ public class FTPCommands {
             e.printStackTrace();
         }
     }
-
+    /**
+     * Get a multiple files from the remote server and place it in the current local working directory.
+     * This function is overloaded.
+     */
     public void getRemoteFile(FTPClient ftp, String... files) {
             for (String path : files) {
                     getRemoteFile(ftp, path);
