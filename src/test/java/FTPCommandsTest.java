@@ -262,8 +262,51 @@ public class FTPCommandsTest {
 
         assertNotNull("'" + target + "' was not found on the server", result);
         assertTrue("'" + target + "' is not a directory", result.isDirectory());
-        assertTrue("'" + target + "' was not deleted from server: ", ftp.removeDirectory(target));
+        assertTrue("'" + target + "' was not deleted from server", ftp.removeDirectory(target));
     }
 
-    // TODO: more directory creation tests
+    /**
+     * Tests that a subdirectory can be created inside an existing subdirectory.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testExistingSubdirectory() throws Exception {
+        String parent = "parent";
+        String child = "child";
+        String path = parent + "/" + child;
+        FTPFile result;
+
+        commands.createRemoteDirectory(ftp, parent);
+        commands.createRemoteDirectory(ftp, path);
+
+        result = findDirectoryOnRemote(child, parent);
+
+        assertNotNull("'" + path + "' was not found on the server", result);
+        assertTrue("'" + path + "' is not a directory", result.isDirectory());
+        assertTrue("'" + path + "' was not deleted from server", ftp.removeDirectory(path));
+        assertTrue("'" + path + "' was not deleted from server", ftp.removeDirectory(parent));
+    }
+
+    /**
+     * Confirms that a subdirectory of a non-existing directory does not get created
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testNoOrphanSubdirectories() throws Exception {
+        String parent = "parent";
+        String child = "child";
+        String path = parent + "/" + child;
+        FTPFile presult;
+        FTPFile cresult;
+
+        commands.createRemoteDirectory(ftp, path);
+
+        presult = findDirectoryOnRemote(parent);
+        cresult = findDirectoryOnRemote(child, parent);
+
+        assertNull("'" + parent + "' was created", presult);
+        assertNull("'" + path + "' was created", cresult);
+    }
 }

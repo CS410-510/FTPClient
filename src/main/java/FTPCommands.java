@@ -134,16 +134,16 @@ public class FTPCommands {
      * path.
      *
      * @param ftp connection assumed
-     * @param filepath argument passed from command line
+     * @param path argument passed from command line
      */
-    public void createRemoteDirectory(FTPClient ftp, String filepath) {
+    public void createRemoteDirectory(FTPClient ftp, String path) {
         try {
-            ftp.makeDirectory(filepath);
+            ftp.makeDirectory(path);
         } catch (IOException e) {
             System.out.println();
             e.printStackTrace();
         }
-        System.out.println("Success");
+        System.out.println("'" + path + "' was created");
     }
 
     /**
