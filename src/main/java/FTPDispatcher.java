@@ -27,17 +27,19 @@ public class FTPDispatcher {
 
             if (line.hasOption('C') || line.hasOption("connect")) {
                 // handle server connection option
+
                 commands.connect(ftp, line.getOptionValue('C'));
             }
 
             if (line.hasOption("l") || line.hasOption("list")) {
                 // handle option to list files
+
                 commands.listFilesFolders(ftp);
             }
 
             if (line.hasOption('g') || line.hasOption("get")) {
-                // handle getting a file on remote
-                commands.getRemoteFile(ftp, line.getOptionValue('g'));
+ 
+                commands.getRemoteFile(ftp, line.getOptionValues('g'));
             }
 
             if (line.hasOption('p') || line.hasOption("put")) {

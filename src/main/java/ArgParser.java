@@ -19,7 +19,7 @@ public class ArgParser {
         Option delete = Option.builder("d").longOpt("delete").required(false).hasArg().optionalArg(false)
                 .argName("PATH")
                 .desc("Delete files or directories.").build();
-        Option get = Option.builder("g").longOpt("get").required(false).hasArg().optionalArg(false)
+        Option get = Option.builder("g").longOpt("get").required(false).hasArgs().optionalArg(false)
                 .argName("PATH")
                 .desc("Without -r, get a single file.").build();
         Option list = Option.builder("l").longOpt("list").required(false).hasArg().optionalArg(false)

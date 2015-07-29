@@ -24,6 +24,7 @@ public class FTPCommands {
      * request access credentials
      */
     public void connect(FTPClient ftp, String server) {
+
         int port = 21;
         Console console = System.console();
         String username = console.readLine("Enter username: ");
@@ -49,6 +50,7 @@ public class FTPCommands {
      * somewhere too.
      */
     public void listFilesFolders(FTPClient ftp) {
+
         // list files
         FTPFile[] files = new FTPFile[0];
         try {
@@ -80,16 +82,24 @@ public class FTPCommands {
      * The location where the retrieved file ends up can be changed if needed. Maybe we could
      * provide the option to specify a location.
      */
-    public void getRemoteFile(FTPClient ftp, String file) {
-        try {
-            OutputStream dest = new FileOutputStream("./" + file);
-            ftp.retrieveFile(file, dest);
-            System.out.println(file + " has been placed in your current working directory");
+    public void getRemoteFile(FTPClient ftp, String filepath) {
+
+        File file = new File(filepath);
+
+        try (OutputStream dest = new FileOutputStream(file)) {
+            ftp.retrieveFile(file.getName(), dest);
+            System.out.println(file.getName() + " has been placed in your current working directory");
         } catch (IOException e) {
             System.out.println("Error retrieving file");
             e.printStackTrace();
         }
     }
+
+    public void getRemoteFile(FTPClient ftp, String... files) {
+            for (String path : files) {
+                    getRemoteFile(ftp, path);
+            }
+        }
 
     /**
      * Put a file from working directory to the remote server
