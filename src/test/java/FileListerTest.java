@@ -117,7 +117,8 @@ public class FileListerTest {
         int nFiles = 4;
         int nDirs = 3;
 
-        String files = lister.listFilesAndDirs(setUpRemoteTestDir(nFiles, nDirs));
+        FTPFile[] mockFiles = setUpRemoteTestDir(nFiles, nDirs);
+        String files = lister.listFilesAndDirs(mockFiles);
 
         for (int i = 0; i < nFiles; ++i) {
             assertTrue("remote file should exist", files.contains("remote_file_" + i));
@@ -125,6 +126,15 @@ public class FileListerTest {
 
         for (int j = 0; j < nDirs; ++j)  {
             assertTrue("remote directory should exist", files.contains("remote_dir_" + j + "/"));
+        }
+
+        // Verifying that our mock objects were actually used within the file lister.
+        for (FTPFile f : mockFiles) {
+            verify(f).getSize();
+            verify(f).getName();
+            verify(f, atLeastOnce()).isDirectory();
+            verify(f).getTimestamp();
+            verify(f, atLeastOnce()).hasPermission(anyInt(), anyInt());
         }
     }
 }
