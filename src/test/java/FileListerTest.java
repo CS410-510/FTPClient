@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import static junit.framework.Assert.fail;
@@ -79,12 +80,17 @@ public class FileListerTest {
     }
 
     /**
-     * This test checks if the FileLister can print local files.
+     * This test checks if the FileLister can print local files, including
+     * empty directories.
      *
      * @throws Exception
      */
     @Test
     public void testCanPrintLocalFiles() throws Exception {
+        String files = lister.listFilesAndDirs(folder.getRoot());
+
+        assertEquals("files should be empty", "Empty directory", files);
+
         ArrayList<File> fileList = new ArrayList<>();
         for (int i = 0; i < 4; ++i) {
             fileList.add(makeTestFile(String.valueOf(i)));
@@ -92,7 +98,7 @@ public class FileListerTest {
         folder.newFolder("testdir");
         folder.newFolder("whoodir");
 
-        String files = lister.listFilesAndDirs(folder.getRoot());
+        files = lister.listFilesAndDirs(folder.getRoot());
 
         for (File file : fileList) {
             assertTrue("can't find file", files.contains(file.getName()));

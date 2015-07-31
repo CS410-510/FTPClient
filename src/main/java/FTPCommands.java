@@ -3,7 +3,6 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.*;
-import java.util.Collection;
 
 /**
  * We can put all the commands that will be available in this
@@ -75,6 +74,16 @@ public class FTPCommands {
             System.out.println(details);
             System.out.println();
         }
+    }
+
+    /**
+     * List the contents of the current local working directory to standard out.
+     */
+    public void listLocalWorkingDir(){
+        // Get the current local working directory from the system.
+        File currentDir = new File(System.getProperty("user.dir"));
+        // Use the File lister to prettify the directory contents.
+        System.out.println(FileLister.getInstance().listFilesAndDirs(currentDir));
     }
 
     /**

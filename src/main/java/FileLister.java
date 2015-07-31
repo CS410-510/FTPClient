@@ -1,11 +1,9 @@
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Collection;
+import java.util.*;
 
 /**
  * The FileLister uses a collection of Files or array of FTPFiles and uses them
@@ -23,7 +21,7 @@ public class FileLister {
     private static FileLister instance;
     private static String nl;
     private static SimpleDateFormat dateFormatter;
-    private static int sizepadding;
+    private static int sizePadding;
 
     // Keep this constructor private to avoid unnecessary instantiation.
     private FileLister() {}
@@ -39,7 +37,7 @@ public class FileLister {
             instance = new FileLister();
             nl = System.lineSeparator();
             dateFormatter = new SimpleDateFormat("M/d/yyyy HH:mm");
-            sizepadding = 12;
+            sizePadding = 12;
         }
         return instance;
     }
@@ -74,7 +72,7 @@ public class FileLister {
         sb.append("    ");
 
         // Add the filesize.
-        sb.append(padLeft(FileUtils.byteCountToDisplaySize(file.length()), sizepadding));
+        sb.append(padLeft(FileUtils.byteCountToDisplaySize(file.length()), sizePadding));
         sb.append("    ");
 
         // Appending last-modified timestamp
@@ -105,7 +103,7 @@ public class FileLister {
         sb.append("    ");
 
         // Add the filesize.
-        sb.append(padLeft(FileUtils.byteCountToDisplaySize(file.getSize()), sizepadding));
+        sb.append(padLeft(FileUtils.byteCountToDisplaySize(file.getSize()), sizePadding));
         sb.append("    ");
 
         // Appending the last-modified date to the current string.
@@ -122,15 +120,18 @@ public class FileLister {
      * @return the contents of the directory as a string
      */
     public String listFilesAndDirs(File directory) {
-        Collection<File> files = FileUtils.listFilesAndDirs(directory,
-                                                            TrueFileFilter.INSTANCE,
-                                                            TrueFileFilter.INSTANCE);
 
+        File[] files = directory.listFiles();
         StringBuilder sb = new StringBuilder();
 
-        for( File file : files ) {
-            sb.append(printFileDetails(file));
-            sb.append(file.getName()).append((file.isDirectory() ? "/" : "")).append(nl);
+        if (files != null && files.length > 0) {
+            Arrays.sort(files);
+            for( File file : files ) {
+                sb.append(printFileDetails(file));
+                sb.append(file.getName()).append((file.isDirectory() ? "/" : "")).append(nl);
+            }
+        } else {
+            sb.append("Empty directory");
         }
 
         return new String(sb);
@@ -145,9 +146,13 @@ public class FileLister {
     public String listFilesAndDirs(FTPFile[] files) {
         StringBuilder sb = new StringBuilder();
 
-        for( FTPFile file : files ) {
-            sb.append(printFileDetails(file));
-            sb.append(file.getName()).append((file.isDirectory() ? "/" : "")).append(nl);
+        if (files != null && files.length > 0) {
+            for (FTPFile file : files) {
+                sb.append(printFileDetails(file));
+                sb.append(file.getName()).append((file.isDirectory() ? "/" : "")).append(nl);
+            }
+        } else {
+            sb.append("Empty directory");
         }
 
         return new String(sb);
