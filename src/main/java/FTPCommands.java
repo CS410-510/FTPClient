@@ -48,7 +48,7 @@ public class FTPCommands {
      * listFiles and checks to see if there's a folder in there
      * somewhere too.
      */
-    public void listFilesFolders(FTPClient ftp) {
+    public void listRemoteWorkingDir(FTPClient ftp) {
 
         // list files
         FTPFile[] files = new FTPFile[0];
@@ -57,32 +57,18 @@ public class FTPCommands {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //iterate through to get files
-        System.out.println();
-        //"Pretty Printing"  subject to change
-        System.out.println("Type\t\t" + "Name\t\t\t" + "Size");
-        for (FTPFile file : files) {
-            String details = file.getName();
-            if (file.isDirectory()) {
-                details = "Folder:\t\t[" + details + "]";
-            } else {
-                details = "File:\t\t" + details;
-            }
-            // Added size, thought it was a nice touch other than just the name and type
-            // can also easily add a Date to it
-            details += "\t\t" + file.getSize();
-            System.out.println(details);
-            System.out.println();
-        }
+
+        // Using File Lister to prettify directory contents.
+        System.out.println(FileLister.getInstance().listFilesAndDirs(files));
     }
 
     /**
      * List the contents of the current local working directory to standard out.
      */
-    public void listLocalWorkingDir(){
+    public void listLocalWorkingDir() {
         // Get the current local working directory from the system.
         File currentDir = new File(System.getProperty("user.dir"));
-        // Use the File lister to prettify the directory contents.
+        // Use the File Lister to prettify the directory contents.
         System.out.println(FileLister.getInstance().listFilesAndDirs(currentDir));
     }
 

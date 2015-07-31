@@ -36,7 +36,7 @@ public class FTPDispatcher {
                     commands.listLocalWorkingDir();
                 } else {
                     // handle option to list remote files
-                    commands.listFilesFolders(ftp);
+                    commands.listRemoteWorkingDir(ftp);
                 }
             }
 
