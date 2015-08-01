@@ -18,6 +18,8 @@ public class FTPSession extends FTPClient implements Serializable {
     private String password;
     private String currentLocalDir = null;
     private String currentRemoteDir = null;
+    // Adding for serialization
+    private static final long serialVersionUID = -8523696657891305249L;
 
     public FTPSession() {}
 
