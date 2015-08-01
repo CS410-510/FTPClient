@@ -31,6 +31,7 @@ public class FTPSessionTest {
     public static class testGoodSession {
 
         private static FTPSession session;
+        private static File testDir;
 
         @Rule
         public TemporaryFolder folder = new TemporaryFolder();
@@ -64,7 +65,7 @@ public class FTPSessionTest {
         @Test
         public void test04CanCreateFileInNewLocalDirectory() throws Exception {
             session.setLocalDir(System.getProperty("user.dir"));
-            File testDir = session.createLocalFile("goodSessionTestDir");
+            testDir = session.createLocalFile("goodSessionTestDir");
             testDir.mkdir();
             testDir.deleteOnExit();
             session.setLocalDir(testDir.getPath());
@@ -80,6 +81,23 @@ public class FTPSessionTest {
         public void test06CanChangeRemoteDirectory() throws Exception {
             assertTrue(session.setRemoteDir("for_testing"));
             assertTrue(session.printWorkingDirectory().contains("for_testing"));
+        }
+
+        @Test
+        public void test07CanRestoreAfterDisconnect() throws Exception {
+            session.disconnect();
+            session.restore();
+            assertTrue(session.isConnected());
+            assertTrue(session.printWorkingDirectory().contains("for_testing"));
+        }
+
+        @Test
+        public void test08RestoreCanRevertToDefaultIfLocalDirIsRemoved() throws Exception {
+            testDir.delete();
+            session.disconnect();
+            session.restore();
+            assertTrue(session.getCurrentLocalDir().equals(System.getProperty("user.dir")));
+
         }
     }
 
@@ -129,6 +147,5 @@ public class FTPSessionTest {
             assertTrue(!session.setRemoteDir(missingDir));
             assertTrue(!session.printWorkingDirectory().contains(missingDir));
         }
-
     }
 }
