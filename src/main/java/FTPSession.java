@@ -22,8 +22,9 @@ public class FTPSession extends FTPClient implements Serializable {
     public FTPSession() {}
 
     /**
+     * This method handles restoring a session's state if restoring from serialization.
      *
-     * @throws IOException
+     * @throws IOException if the session can't connect to its server
      */
     public void restore() throws IOException {
         super.connect(host, port);
