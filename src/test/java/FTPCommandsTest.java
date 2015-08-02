@@ -309,4 +309,24 @@ public class FTPCommandsTest {
         assertNull("'" + parent + "' was created", presult);
         assertNull("'" + path + "' was created", cresult);
     }
+
+    /**
+     * Confirms that a file currently on the remote server gets
+     * deleted.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testDeleteRemoteFile() throws Exception {
+        File testfile = makeTestFile("hello world");
+        //String file = "C:\\testDeleteRemote.txt";
+        commands.putRemoteFile(ftp, testfile.getPath());
+
+        //file.substring(2) = "testDeleteRemote.txt"
+        commands.deleteRemoteFile(ftp, testfile.getName());
+
+        FTPFile presult = findFileOnRemote(testfile.getName());
+
+        assertNull("'" + testfile.getName() + "' was deleted", presult);
+    }
 }
