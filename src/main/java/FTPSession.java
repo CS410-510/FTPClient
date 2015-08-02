@@ -39,7 +39,7 @@ public class FTPSession extends FTPClient implements Serializable {
         }
         // If the local directory no longer exists, change to the local system's
         // current directory.
-        if (currentLocalDir == null || !setLocalDir(currentLocalDir)) {
+        if (currentLocalDir == null || !changeLocalDirectory(currentLocalDir)) {
             currentLocalDir = System.getProperty("user.dir");
         }
 
@@ -67,8 +67,7 @@ public class FTPSession extends FTPClient implements Serializable {
 
     /**
      * This is a wrapper for FTPClient's login that lets FTPSession hold onto
-     * the username and password. It also handles setting up the proper mode
-     * and filetype.
+     * the username and password.
      *
      * @param username for logging into FTP server
      * @param password for loggint into FTP server
@@ -82,8 +81,6 @@ public class FTPSession extends FTPClient implements Serializable {
         if (super.login(username, password)) {
             this.username = username;
             this.password = password;
-            super.enterLocalPassiveMode();
-            super.setFileType(FTP.BINARY_FILE_TYPE);
 
             // If we don't already have local dirs, set them to defaults.
             if (currentLocalDir == null)
@@ -100,7 +97,7 @@ public class FTPSession extends FTPClient implements Serializable {
      * Getter for current local directory.
      * @return current local directory
      */
-    public String getCurrentLocalDir() {
+    public String getLocalDirectory() {
         return currentLocalDir;
     }
 
@@ -111,7 +108,7 @@ public class FTPSession extends FTPClient implements Serializable {
      * @param path filepath to use
      * @return true if changed successfully, false otherwise.
      */
-    public boolean setLocalDir(String path) {
+    public boolean changeLocalDirectory(String path) {
         boolean result = false;
 
         File newDir = new File(path);

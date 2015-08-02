@@ -48,7 +48,7 @@ public class FTPSessionSerializerTest {
             assertTrue("session is not connected", originalSession.isConnected());
             // Adding a directory to change session's local directory.
             newDir.mkdir();
-            originalSession.setLocalDir(newDir.getPath());
+            originalSession.changeLocalDirectory(newDir.getPath());
             FTPSessionSerializer.serialize(originalSession, savedSessionFile.getAbsolutePath());
             assertTrue("serialization file doesn't exist", savedSessionFile.exists());
         }
@@ -57,7 +57,7 @@ public class FTPSessionSerializerTest {
         public void test02CanDeserializeSession() throws Exception {
             restoredSession = FTPSessionSerializer.deserialize(savedSessionFile.getAbsolutePath());
             assertTrue("restored session missing new directory",
-                    restoredSession.getCurrentLocalDir().equals(newDir.getAbsolutePath()));
+                    restoredSession.getLocalDirectory().equals(newDir.getAbsolutePath()));
             assertTrue("restored session not connected", restoredSession.isConnected());
         }
     }
