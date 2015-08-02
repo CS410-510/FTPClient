@@ -13,7 +13,7 @@ public class FTPDispatcher {
      */
     public FTPDispatcher() {}
 
-    public void dispatch(String[] args, FTPClient ftp) {
+    public void dispatch(String[] args, FTPSession ftp) {
 
         CommandLine line = ArgParser.parse(args);
 
@@ -33,7 +33,7 @@ public class FTPDispatcher {
             if (line.hasOption("l") || line.hasOption("list")) {
                 if (line.hasOption("L") || line.hasOption("local")) {
                     // handle option to list local files
-                    commands.listLocalWorkingDir();
+                    commands.listLocalWorkingDir(ftp);
                 } else {
                     // handle option to list remote files
                     commands.listRemoteWorkingDir(ftp);
