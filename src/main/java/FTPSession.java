@@ -7,7 +7,9 @@ import java.io.Serializable;
 
 /**
  * This is essentially a wrapper for FTPClient that allows storage of some state
- * related to the current FTP session.
+ * related to the current FTP session. Some FTPClient methods are overridden to
+ * do some work with arguments here, but all overriding methods call their
+ * corresponding superclass methods.
  *
  * @author Sergio Garcia
  */
@@ -43,7 +45,7 @@ public class FTPSession extends FTPClient implements Serializable {
 
         // If the remote directory no longer exists, change to the server's
         // current directory.
-        if (currentRemoteDir == null || !setRemoteDir(currentRemoteDir)) {
+        if (currentRemoteDir == null || !changeWorkingDirectory(currentRemoteDir)) {
             currentRemoteDir = super.printWorkingDirectory();
         }
     }
@@ -56,6 +58,7 @@ public class FTPSession extends FTPClient implements Serializable {
      * @param port for connecting to FTP server
      * @throws IOException
      */
+    @Override
     public void connect(String hostname, int port) throws IOException {
         super.connect(hostname, port);
         this.host = hostname;
@@ -72,6 +75,7 @@ public class FTPSession extends FTPClient implements Serializable {
      * @return true we logged in, false otherwise
      * @throws IOException if there is a communication issue with the server
      */
+    @Override
     public boolean login(String username, String password) throws IOException {
         boolean result = false;
 
@@ -120,25 +124,14 @@ public class FTPSession extends FTPClient implements Serializable {
     }
 
     /**
-     * This creates a new File using the current local directory as the new
-     * File's parent. Use this if your intent is to create a file or directory
-     * in the FTPSession's current working local directory.
-     *
-     * @param filepath relative filepath of file to create
-     * @return a new File with the current local directory as its parent directory
-     */
-    public File createLocalFile(String filepath) {
-        return new File(currentLocalDir, filepath);
-    }
-
-    /**
      * This sets the server's remote directory to the provided directory.
      *
      * @param path filepath of remote directory
      * @return true if changed successfully, false otherwise
      * @throws IOException
      */
-    public boolean setRemoteDir(String path) throws IOException {
+    @Override
+    public boolean changeWorkingDirectory(String path) throws IOException {
         boolean result = false;
 
         if (super.changeWorkingDirectory(path)) {
