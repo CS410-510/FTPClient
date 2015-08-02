@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static junit.framework.Assert.*;
+import static org.junit.Assert.*;
 
 /**
  * Tests for FTPCommands class
@@ -24,7 +24,7 @@ import static junit.framework.Assert.*;
  */
 public class FTPCommandsTest {
 
-    FTPClient ftp = new FTPClient();
+    FTPSession ftp = new FTPSession();
     String server = "52.25.152.38";
     String user = "ftptestuser";
     String pass = "password";
