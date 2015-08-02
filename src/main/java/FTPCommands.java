@@ -115,7 +115,7 @@ public class FTPCommands {
      */
     public void listLocalWorkingDir(FTPSession ftp) {
         // Get the current local working directory from the system.
-        File currentDir = new File(ftp.getCurrentLocalDir());
+        File currentDir = new File(ftp.getLocalDirectory());
         // Use the File Lister to prettify the directory contents.
         System.out.println(FileLister.getInstance().listFilesAndDirs(currentDir));
     }
@@ -139,7 +139,8 @@ public class FTPCommands {
     }
 
     /**
-     * Overloaded for FTPSession conversion
+     * Overloaded for FTPSession conversion, modified to use FTPSession's current local
+     * working directory versus the system's.
      *
      * Get a file from the remote server and place it in the current local working directory.
      * The location where the retrieved file ends up can be changed if needed. Maybe we could
@@ -147,11 +148,15 @@ public class FTPCommands {
      */
     public void getRemoteFile(FTPSession ftp, String filepath) {
 
-        File file = new File(filepath);
+        // Using a File instance to parse the remote file's name easily.
+        File remoteFile = new File(filepath);
+        // Construct the new location for the local file using the
+        // FTPSession's current directory as the parent.
+        File localFile = new File(ftp.getLocalDirectory(), remoteFile.getName());
 
-        try (OutputStream dest = new FileOutputStream(file)) {
-            ftp.retrieveFile(file.getName(), dest);
-            System.out.println(file.getName() + " has been placed in your current working directory");
+        try (OutputStream dest = new FileOutputStream(localFile)) {
+            ftp.retrieveFile(filepath, dest);
+            System.out.println(localFile.getName() + " has been placed in your current working directory");
         } catch (IOException e) {
             System.out.println("Error retrieving file");
             e.printStackTrace();
