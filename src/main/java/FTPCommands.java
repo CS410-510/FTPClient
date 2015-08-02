@@ -293,6 +293,27 @@ public class FTPCommands {
     }
 
     /**
+     * Delete specified file from the remote FTP server.
+     *
+     *
+     */
+    public void deleteRemoteFile(FTPSession ftp, String path) {
+        boolean success = false;
+        try {
+            success = ftp.deleteFile(path);
+        } catch (IOException e) {
+            System.out.println();
+            e.printStackTrace();
+        }
+
+        if (success)
+            System.out.println("Remote file '" + path + "' was removed");
+        else
+            System.out.println("Error deleting '" + path + "' on remote server");
+
+    }
+
+    /**
      * Perform logoff and disconnect functions
      */
     public void exit(FTPClient ftp) {

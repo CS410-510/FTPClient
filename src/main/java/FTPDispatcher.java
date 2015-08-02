@@ -59,7 +59,8 @@ public class FTPDispatcher {
                 if (line.hasOption('R') || line.hasOption("recursive")) {
                     // TODO: handle delete remote directory
                 } else {
-                    // TODO: handle delete remote file
+                    // delete file on remote server
+                    commands.deleteRemoteFile(ftp, line.getOptionValue('d'));
                 }
             }
 
