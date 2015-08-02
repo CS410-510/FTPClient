@@ -1,3 +1,4 @@
+import org.apache.commons.net.ftp.FTP;
 import org.junit.*;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.rules.TemporaryFolder;
@@ -55,22 +56,24 @@ public class FTPSessionTest {
         @Test
         public void test02CanLogin() throws Exception {
             assertTrue(session.login(USER, PASSWORD));
+            session.enterLocalPassiveMode();
+            session.setFileType(FTP.BINARY_FILE_TYPE);
         }
 
         @Test
         public void test03CanChangeLocalDirectory() {
-            assertTrue(session.setLocalDir(folder.getRoot().getPath()));
+            assertTrue(session.changeLocalDirectory(folder.getRoot().getPath()));
         }
 
         @Test
         public void test04CanCreateFileInNewLocalDirectory() throws Exception {
-            session.setLocalDir(System.getProperty("user.dir"));
-            testDir = new File(session.getCurrentLocalDir(), "goodSessionTestDir");
+            session.changeLocalDirectory(System.getProperty("user.dir"));
+            testDir = new File(session.getLocalDirectory(), "goodSessionTestDir");
             testDir.mkdir();
             testDir.deleteOnExit();
-            session.setLocalDir(testDir.getPath());
+            session.changeLocalDirectory(testDir.getPath());
 
-            File testfile = new File(session.getCurrentLocalDir(), "goodSessionTest04");
+            File testfile = new File(session.getLocalDirectory(), "goodSessionTest04");
             testfile.createNewFile();
             testfile.deleteOnExit();
             assertTrue(testfile.getAbsolutePath().contains(testDir.getAbsolutePath()));
@@ -97,7 +100,7 @@ public class FTPSessionTest {
             assertTrue(testDir.delete());
             session.disconnect();
             session.restore();
-            assertTrue(session.getCurrentLocalDir().equals(System.getProperty("user.dir")));
+            assertTrue(session.getLocalDirectory().equals(System.getProperty("user.dir")));
         }
     }
 

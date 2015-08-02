@@ -1,5 +1,4 @@
 import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -10,8 +9,6 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
@@ -308,6 +305,25 @@ public class FTPCommandsTest {
 
         assertNull("'" + parent + "' was created", presult);
         assertNull("'" + path + "' was created", cresult);
+    }
+
+    @Test
+    public void testGetRemotePutsFilesInCorrectLocalDirAfterChangingDir() throws Exception {
+        String filename = "squash.txt";
+        String message = "i'm squishy.";
+        String oldLocalDir = ftp.getLocalDirectory();
+        String newLocalDir = folder.getRoot().getAbsolutePath();
+        ftp.changeLocalDirectory(newLocalDir);
+
+        commands.getRemoteFile(ftp, "squash.txt");
+        File localCopy = new File(ftp.getLocalDirectory(), filename);
+        localCopy.deleteOnExit();
+
+        // Reset the local before checking test results to avoid breaking other tests.
+        ftp.changeLocalDirectory(oldLocalDir);
+        assertTrue(localCopy.exists());
+        assertTrue(localCopy.getAbsolutePath().contains(newLocalDir));
+        assertTrue(FileUtils.readLines(localCopy).contains(message));
     }
 
     /**
