@@ -14,6 +14,8 @@ hs_err_pid*
 # IDEA Intellij related ignores
 .idea/
 out/
+FTPClient.iml
 
 # Maven generation ignores
 target/
+dependency-reduced-pom.xml
