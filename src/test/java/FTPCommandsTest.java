@@ -1,5 +1,4 @@
 import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -10,11 +9,9 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
-import static junit.framework.Assert.*;
+import static org.junit.Assert.*;
 
 /**
  * Tests for FTPCommands class
@@ -24,7 +21,7 @@ import static junit.framework.Assert.*;
  */
 public class FTPCommandsTest {
 
-    FTPClient ftp = new FTPClient();
+    FTPSession ftp = new FTPSession();
     String server = "52.25.152.38";
     String user = "ftptestuser";
     String pass = "password";
@@ -308,5 +305,44 @@ public class FTPCommandsTest {
 
         assertNull("'" + parent + "' was created", presult);
         assertNull("'" + path + "' was created", cresult);
+    }
+
+    @Test
+    public void testGetRemotePutsFilesInCorrectLocalDirAfterChangingDir() throws Exception {
+        String filename = "squash.txt";
+        String message = "i'm squishy.";
+        String oldLocalDir = ftp.getLocalDirectory();
+        String newLocalDir = folder.getRoot().getAbsolutePath();
+        ftp.changeLocalDirectory(newLocalDir);
+
+        commands.getRemoteFile(ftp, "squash.txt");
+        File localCopy = new File(ftp.getLocalDirectory(), filename);
+        localCopy.deleteOnExit();
+
+        // Reset the local before checking test results to avoid breaking other tests.
+        ftp.changeLocalDirectory(oldLocalDir);
+        assertTrue(localCopy.exists());
+        assertTrue(localCopy.getAbsolutePath().contains(newLocalDir));
+        assertTrue(FileUtils.readLines(localCopy).contains(message));
+    }
+
+    /**
+     * Confirms that a file currently on the remote server gets
+     * deleted.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testDeleteRemoteFile() throws Exception {
+        File testfile = makeTestFile("hello world");
+        //String file = "C:\\testDeleteRemote.txt";
+        commands.putRemoteFile(ftp, testfile.getPath());
+
+        //file.substring(2) = "testDeleteRemote.txt"
+        commands.deleteRemoteFile(ftp, testfile.getName());
+
+        FTPFile presult = findFileOnRemote(testfile.getName());
+
+        assertNull("'" + testfile.getName() + "' was deleted", presult);
     }
 }

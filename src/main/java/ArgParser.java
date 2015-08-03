@@ -18,10 +18,10 @@ public class ArgParser {
                 .desc("Begin or switch the connection context.").build();
         Option delete = Option.builder("d").longOpt("delete").required(false).hasArg().optionalArg(false)
                 .argName("PATH")
-                .desc("Delete files or directories.").build();
-        Option get = Option.builder("g").longOpt("get").required(false).hasArgs().optionalArg(false)
-                .argName("PATH")
-                .desc("Without -r, get a single file.").build();
+                .desc("Delete a file, use with -R for a directory.").build();
+        Option get = Option.builder("g").longOpt("get").required(false).hasArg().optionalArg(false)
+                .argName("PATHS")
+                .desc("Get file(s).").build();
         Option list = Option.builder("l").longOpt("list").required(false).hasArg().optionalArg(false)
                 .argName("PATH")
                 .desc("List files and directories.").build();
@@ -41,14 +41,14 @@ public class ArgParser {
         opsGrp.addOption(get);
         opsGrp.addOption(list);
         opsGrp.addOption(put);
+        opsGrp.addOption(dir);
         opsGrp.addOption(copy);
 
         options.addOptionGroup(opsGrp);
         options.addOption(connect);
         options.addOption("h", "help", false, "Print this help information.");
         options.addOption("N", "disconnect", false, "Disconnect from the current connection context.");
-        options.addOption("m", "multiple", false, "Used with -g or -p - get or put multiple files.");
-        options.addOption("r", "remote", false, "Source is the remote server.");
+        options.addOption("L", "local", false, "Source is the local machine.");
         options.addOption("R", "recursive", false, "Where allowed, target is a directory.");
 
     }

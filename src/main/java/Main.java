@@ -1,8 +1,7 @@
-import org.apache.commons.net.ftp.FTPClient;
 
 public class Main {
 
-    static FTPClient ftp = new FTPClient();
+    static FTPSession ftp = new FTPSession();
 
     public static void main(String[] args) {
 
