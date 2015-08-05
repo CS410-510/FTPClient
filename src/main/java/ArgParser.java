@@ -8,7 +8,7 @@ public class ArgParser {
     private static Options options = null;
     private static OptionGroup opsGrp = null;
 
-    public static void initParser() {
+    private static void initParser() {
         parser = new DefaultParser();
         options = new Options();
         opsGrp = new OptionGroup();
@@ -53,8 +53,18 @@ public class ArgParser {
 
     }
 
+    /**
+     * The list of command line options entered and any associated arguments
+     *
+     * @param args
+     * @return
+     */
     public static CommandLine parse(String[] args) {
         CommandLine line = null;
+
+        if (parser == null) {
+            initParser();
+        }
 
         try {
             line = parser.parse(options, args);
@@ -62,13 +72,15 @@ public class ArgParser {
         catch(ParseException e) {
             System.out.println("Parse error occurred. " + e.getMessage());
         }
-        catch(NullPointerException e) {
-            System.out.println("No parser exists.");
-        }
 
         return line;
     }
 
+    /**
+     * The command line options accepted by the application
+     *
+     * @return
+     */
     public static Options options() {
         return options;
     }

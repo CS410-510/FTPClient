@@ -5,7 +5,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        ArgParser.initParser();
+        ArgParser.parse(args);
         FTPDispatcher dispatcher = new FTPDispatcher();
         dispatcher.dispatch(args, ftp);
     }
