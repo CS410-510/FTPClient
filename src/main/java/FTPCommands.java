@@ -72,8 +72,9 @@ public class FTPCommands {
 
     /**
      * Get a file from the remote server and place it in the current local working directory.
-     * The location where the retrieved file ends up can be changed if needed. Maybe we could
-     * provide the option to specify a location.
+     *
+     * @param ftp Assuming a connection
+     * @param filepath Input from cmd line
      */
     public void getRemoteFile(FTPSession ftp, String filepath) {
 
@@ -92,7 +93,13 @@ public class FTPCommands {
         }
     }
 
-    /** Overloaded for FTPSession conversion. */
+    /**
+     * Overloaded for FTPSession conversion
+     *
+     * @param ftp Assuming a connection
+     * @param files Input from cmd line
+     *
+     * */
     public void getRemoteFile(FTPSession ftp, String... files) {
         for (String path : files) {
             getRemoteFile(ftp, path);
