@@ -330,6 +330,7 @@ public class FTPCommandsTest {
     @Test
     public void testGetRemoteFileGoesToCurrentDirectory() throws Exception {
         File fileToGrab = new File("test_file.txt");
+        fileToGrab.createNewFile();
         String localDirectory = ftp.getLocalDirectory();
 
         // Put the new file on the remote server
