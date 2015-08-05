@@ -2,6 +2,7 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.*;
+import java.util.Scanner;
 
 /**
  * We can put all the commands that will be available in this
@@ -112,10 +113,28 @@ public class FTPCommands {
 
         // Switched to try-with-resources, autocloses when done w/ stream
         try (InputStream local = new FileInputStream(file)) {
-            // TODO: Silent overwrite if file already exists on server. Maybe change later?
-            ftp.storeFile(file.getName(), local);
+            //********************** READ ME *************************
+            // file.getName() stops tests so be aware of that, but it still doesn't work correctly.
+            // storeUniqueFile doesnt seem to be working as it should either, basically nothing is being
+            // overwritten!
+            // We might just want to scrap this crap    -Ryan
+            //********************************************************
+            if(fileDoesExist(ftp, file.getName())) {
+                Scanner input = new Scanner(System.in);
+                System.out.println(filepath + " exists." + "\n" + "Overwrite? (y/n) ");
+                String user;
+                user = input.nextLine();
+                if(user.equals("Y") || user.equals("y")) {
+                    ftp.deleteFile(file.getName());
+                    ftp.storeFile(file.getName(), local);
+                } else {
+                    ftp.storeUniqueFile(file.getName(),local);
+                }
+            } else {
+                ftp.storeFile(file.getName(), local);
+            }
             System.out.println(file.getName() + " upload complete");
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -173,6 +192,21 @@ public class FTPCommands {
         else
             System.out.println("Error deleting '" + path + "' on remote server");
 
+    }
+
+    /**
+     * Return result if file exists on server
+     *
+     * @param ftp assume connection established
+     * @param path check filepath from command line
+     * @return if file exists or not
+     * @throws Exception
+     */
+    boolean fileDoesExist(FTPSession ftp, String path) throws Exception {
+        int reply;
+        InputStream stream = ftp.retrieveFileStream(path);
+        reply = ftp.getReplyCode();
+        return !(stream == null || reply == 550);
     }
 
     /**
