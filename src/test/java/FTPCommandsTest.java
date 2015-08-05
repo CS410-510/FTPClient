@@ -18,6 +18,7 @@ import static org.junit.Assert.*;
  *
  * @author Ryan
  * @author Sergio
+ * @author Eric
  */
 public class FTPCommandsTest {
 
@@ -324,6 +325,22 @@ public class FTPCommandsTest {
         assertTrue(localCopy.exists());
         assertTrue(localCopy.getAbsolutePath().contains(newLocalDir));
         assertTrue(FileUtils.readLines(localCopy).contains(message));
+    }
+
+    @Test
+    public void testGetRemoteFileGoesToCurrentDirectory() throws Exception {
+        File fileToGrab = new File("test_file.txt");
+        String localDirectory = ftp.getLocalDirectory();
+
+        // Put the new file on the remote server
+        commands.putRemoteFile(ftp, fileToGrab.getName());
+        // Get the new file and put in on the local server
+        commands.getRemoteFile(ftp, fileToGrab.getName());
+
+        File localGrabbedFile = new File(localDirectory, fileToGrab.getName());
+        localGrabbedFile.deleteOnExit();
+
+        assertTrue(localGrabbedFile.exists());
     }
 
     /**
