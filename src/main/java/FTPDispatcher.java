@@ -13,7 +13,7 @@ public class FTPDispatcher {
      */
     public FTPDispatcher() {}
 
-    public void dispatch(String[] args, FTPClient ftp) {
+    public void dispatch(String[] args, FTPSession ftp) {
 
         CommandLine line = ArgParser.parse(args);
 
@@ -32,10 +32,11 @@ public class FTPDispatcher {
 
             if (line.hasOption("l") || line.hasOption("list")) {
                 if (line.hasOption("L") || line.hasOption("local")) {
-                    // TODO: local version of command
+                    // handle option to list local files
+                    commands.listLocalWorkingDir(ftp);
                 } else {
                     // handle option to list remote files
-                    commands.listFilesFolders(ftp);
+                    commands.listRemoteWorkingDir(ftp);
                 }
             }
 
@@ -58,7 +59,8 @@ public class FTPDispatcher {
                 if (line.hasOption('R') || line.hasOption("recursive")) {
                     // TODO: handle delete remote directory
                 } else {
-                    // TODO: handle delete remote file
+                    // delete file on remote server
+                    commands.deleteRemoteFile(ftp, line.getOptionValue('d'));
                 }
             }
 
