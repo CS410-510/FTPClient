@@ -338,6 +338,7 @@ public class FTPCommandsTest {
         commands.getRemoteFile(ftp, fileToGrab.getName());
 
         File localGrabbedFile = new File(localDirectory, fileToGrab.getName());
+        localGrabbedFile.deleteOnExit();
 
         assertTrue(localGrabbedFile.exists());
     }
