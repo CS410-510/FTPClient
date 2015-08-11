@@ -188,10 +188,18 @@ public class FTPCommands {
      * octal. Note that the user's read or write access can't be modified.
      *
      * @param ftp connection assumed
-     * @param octal an octal, 600 - 777
-     * @param filename remote file to modify
+     * @param args from command line, first arg is a parseable octal, and second
+     *             arg is a filename.
      */
-    public void changeRemotePermissions(FTPSession ftp, String octal, String filename) {
+    public void changeRemotePermissions(FTPSession ftp, String... args) {
+        if (args.length != 2) {
+            System.out.println("Invalid number of args provided");
+            return;
+        }
+
+        String octal = args[0];
+        String filename = args[1];
+
         int perms;
         try {
             perms = Integer.parseInt(octal);
@@ -200,10 +208,12 @@ public class FTPCommands {
             return;
         }
 
+        // Break up the parsed octal by access level.
         int user = perms / 100;
         int group = (perms % 100) / 10;
         int world = perms % 10;
 
+        // Make sure our octal is good before sending.
         if (user < 6 || user > 7) {
             System.out.println("Invalid user octal: " + user);
             return;
@@ -217,40 +227,18 @@ public class FTPCommands {
             return;
         }
 
-        FTPFile[] files;
-        FTPFile found = null;
+        boolean success = false;
+
         try {
-            files = ftp.listFiles(filename);
-            for (FTPFile f : files) {
-                if (f.getName().equals(filename)) {
-                    if (user == 7) {
-                        f.setPermission(FTPFile.USER_ACCESS, FTPFile.EXECUTE_PERMISSION, true);
-                    }
-                    else {
-                        f.setPermission(FTPFile.USER_ACCESS, FTPFile.EXECUTE_PERMISSION, false);
-                    }
-
-                    f.setPermission(FTPFile.GROUP_ACCESS, FTPFile.READ_PERMISSION, (group >>> 2 == 1));
-                    f.setPermission(FTPFile.GROUP_ACCESS, FTPFile.WRITE_PERMISSION,(((group & 0b11) >>> 1) == 1));
-                    f.setPermission(FTPFile.GROUP_ACCESS, FTPFile.EXECUTE_PERMISSION, ((group & 0b1) == 1));
-
-                    f.setPermission(FTPFile.WORLD_ACCESS, FTPFile.READ_PERMISSION, (group >>> 2 == 1));
-                    f.setPermission(FTPFile.WORLD_ACCESS, FTPFile.WRITE_PERMISSION,(((group & 0b11) >>> 1) == 1 ));
-                    f.setPermission(FTPFile.WORLD_ACCESS, FTPFile.EXECUTE_PERMISSION, ((group & 0b1) == 1));
-
-                    found = f;
-                }
-            }
-
+            success = ftp.sendSiteCommand("chmod " + octal + " " + filename);
         } catch (IOException e) {
-            System.out.println("Error retrieving file");
+            System.out.println("Error contacting server");
         }
 
-        if (found != null) {
-            System.out.println("New permissions:");
-            System.out.println(found.toFormattedString());
+        if (success) {
+            System.out.println("Permissions modified");
         } else {
-            System.out.println("File not found");
+            System.out.println("Permission modification failed");
         }
     }
 

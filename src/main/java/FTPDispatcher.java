@@ -55,6 +55,11 @@ public class FTPDispatcher {
                 commands.createRemoteDirectory(ftp, line.getOptionValue('i'));
             }
 
+            if (line.hasOption('m') || line.hasOption("modify")) {
+                // modify remote file permissions
+                commands.changeRemotePermissions(ftp, line.getOptionValues('m'));
+            }
+
             if (line.hasOption('d') || line.hasOption("delete")) {
                 if (line.hasOption('R') || line.hasOption("recursive")) {
                     // TODO: handle delete remote directory

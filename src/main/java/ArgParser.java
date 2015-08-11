@@ -35,6 +35,9 @@ public class ArgParser {
         Option put = Option.builder("p").longOpt("put").required(false).hasArgs().optionalArg(false)
                 .argName("PATHS")
                 .desc("Put file(s).").build();
+        Option modify = Option.builder("m").longOpt("modify").required(false).numberOfArgs(2).optionalArg(false)
+                .argName("OCTAL, PATH")
+                .desc("Modify a file's permissions on the server.").build();
 
         opsGrp.setRequired(false);
         opsGrp.addOption(delete);
@@ -43,6 +46,7 @@ public class ArgParser {
         opsGrp.addOption(put);
         opsGrp.addOption(dir);
         opsGrp.addOption(copy);
+        opsGrp.addOption(modify);
 
         options.addOptionGroup(opsGrp);
         options.addOption(connect);
