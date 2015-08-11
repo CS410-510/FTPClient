@@ -17,3 +17,9 @@ It may be a good idea to clean between packages if you're switching between bran
 `mvn clean`
 
 to remove any old artifacts from previous builds. This typically removes the `target` subdirectory and its contents.
+## Generate site/docs
+If you'd like to generate all sorts of Javadocs, test results, and other documentation for the project, run:
+
+`mvn site`
+
+and a website containing all documentation relevant to the project will be created in the `target/site` subdirectory, with the root at index.html.

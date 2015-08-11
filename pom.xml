@@ -7,6 +7,65 @@
     <groupId>groupId</groupId>
     <artifactId>FTPClient</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <name>CS510A/410A FTP Client Project</name>
+    <description>An FTP client application for CS510A/410A at Portland State University</description>
+    <inceptionYear>2015</inceptionYear>
+    <developers>
+        <developer>
+            <name>Aaron Nash</name>
+            <organization>PSU Department of Computer Science</organization>
+            <organizationUrl>http://www.cs.pdx.edu</organizationUrl>
+            <roles>
+                <role>Student</role>
+            </roles>
+            <timezone>-7</timezone>
+        </developer>
+        <developer>
+            <name>Eric Almadova</name>
+            <organization>PSU Department of Computer Science</organization>
+            <organizationUrl>http://www.cs.pdx.edu</organizationUrl>
+            <roles>
+                <role>Student</role>
+            </roles>
+            <timezone>-7</timezone>
+        </developer>
+        <developer>
+            <name>Ryan Anderson</name>
+            <organization>PSU Department of Computer Science</organization>
+            <organizationUrl>http://www.cs.pdx.edu</organizationUrl>
+            <roles>
+                <role>Student</role>
+            </roles>
+            <timezone>-7</timezone>
+        </developer>
+        <developer>
+            <name>Brandon Allen</name>
+            <organization>PSU Department of Computer Science</organization>
+            <organizationUrl>http://www.cs.pdx.edu</organizationUrl>
+            <roles>
+                <role>Student</role>
+            </roles>
+            <timezone>-7</timezone>
+        </developer>
+        <developer>
+            <name>Sergio Garcia</name>
+            <organization>PSU Department of Computer Science</organization>
+            <organizationUrl>http://www.cs.pdx.edu</organizationUrl>
+            <roles>
+                <role>Student</role>
+            </roles>
+            <timezone>-7</timezone>
+        </developer>
+        <developer>
+            <name>Jon Kiersey</name>
+            <organization>PSU Department of Computer Science</organization>
+            <organizationUrl>http://www.cs.pdx.edu</organizationUrl>
+            <roles>
+                <role>Student</role>
+            </roles>
+            <timezone>-7</timezone>
+        </developer>
+    </developers>
     <dependencies>
       <dependency>
         <groupId>commons-net</groupId>
