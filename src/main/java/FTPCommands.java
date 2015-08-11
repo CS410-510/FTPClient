@@ -182,6 +182,66 @@ public class FTPCommands {
 
     }
 
+
+    /**
+     * Changes a remote file's permissions to that represented by the unix-style
+     * octal. Note that the user's read or write access can't be modified.
+     *
+     * @param ftp connection assumed
+     * @param args from command line, first arg is a parseable octal, and second
+     *             arg is a filename.
+     */
+    public void changeRemotePermissions(FTPSession ftp, String... args) {
+        if (args.length != 2) {
+            System.out.println("Invalid number of args provided");
+            return;
+        }
+
+        String octal = args[0];
+        String filename = args[1];
+
+        int perms;
+        try {
+            perms = Integer.parseInt(octal);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid permission octal: " + octal);
+            return;
+        }
+
+        // Break up the parsed octal by access level.
+        int user = perms / 100;
+        int group = (perms % 100) / 10;
+        int world = perms % 10;
+
+        // Make sure our octal is good before sending.
+        if (user < 6 || user > 7) {
+            System.out.println("Invalid user octal: " + user);
+            return;
+        }
+        if (group < 0 || group > 7) {
+            System.out.println("Invalid group octal: " + group);
+            return;
+        }
+        if (world < 0 || world > 7) {
+            System.out.println("Invalid world octal:" + world);
+            return;
+        }
+
+        boolean success = false;
+
+        try {
+            success = ftp.sendSiteCommand("chmod " + octal + " " + filename);
+        } catch (IOException e) {
+            System.out.println("Error contacting server");
+        }
+
+        if (success) {
+            System.out.println("Permissions modified");
+        } else {
+            System.out.println("Permission modification failed");
+        }
+    }
+
     /**
      * Perform logoff and disconnect functions
      */
