@@ -16,6 +16,9 @@ import java.io.PrintWriter;
 @RunWith(Enclosed.class)
 public class FTPSessionSerializerTest {
 
+    /**
+     * Contains tests for functionality with good serialization file.
+     */
     @FixMethodOrder(MethodSorters.NAME_ASCENDING)
     public static class goodSerialization {
         @ClassRule
@@ -43,6 +46,10 @@ public class FTPSessionSerializerTest {
             originalSession.disconnect();
         }
 
+        /**
+         * Tests that serialization works.
+         * @throws Exception unexpected
+         */
         @Test
         public void test01CanSerializeSession() throws Exception {
             assertTrue("session is not connected", originalSession.isConnected());
@@ -53,6 +60,10 @@ public class FTPSessionSerializerTest {
             assertTrue("serialization file doesn't exist", savedSessionFile.exists());
         }
 
+        /**
+         * Tests that deserialization works.
+         * @throws Exception unexpected
+         */
         @Test
         public void test02CanDeserializeSession() throws Exception {
             restoredSession = FTPSessionSerializer.deserialize(savedSessionFile.getAbsolutePath());
@@ -62,6 +73,9 @@ public class FTPSessionSerializerTest {
         }
     }
 
+    /**
+     * Contains tests for functionality with bad serialization file.
+     */
     @FixMethodOrder (MethodSorters.NAME_ASCENDING)
     public static class badSerialization {
         @Test (expected = IOException.class)
@@ -69,6 +83,10 @@ public class FTPSessionSerializerTest {
             FTPSession session = FTPSessionSerializer.deserialize("nonexistentfile");
         }
 
+        /**
+         * Tests deserialization with empty file, should throw IOException.
+         * @throws Exception unexpected
+         */
         @Test (expected = IOException.class)
         public void deserializationWithEmptyFileThrowsException() throws Exception {
             File badsession = new File("emptyfile");
@@ -77,6 +95,10 @@ public class FTPSessionSerializerTest {
             FTPSession session = FTPSessionSerializer.deserialize(badsession.getAbsolutePath());
         }
 
+        /**
+         * Tests deserialization with bad file, should throw IOException.
+         * @throws Exception unexpected
+         */
         @Test (expected = IOException.class)
         public void deserializationWithBadFileThrowsException() throws Exception {
             File badsession = new File("badfile");
