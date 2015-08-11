@@ -182,6 +182,78 @@ public class FTPCommands {
 
     }
 
+
+    /**
+     * Changes a remote file's permissions to that represented by the unix-style
+     * octal. Note that the user's read or write access can't be modified.
+     *
+     * @param ftp connection assumed
+     * @param octal an octal, 600 - 777
+     * @param filename remote file to modify
+     */
+    public void changeRemotePermissions(FTPSession ftp, String octal, String filename) {
+        int perms;
+        try {
+            perms = Integer.parseInt(octal);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid permission octal: " + octal);
+            return;
+        }
+
+        int user = perms / 100;
+        int group = (perms % 100) / 10;
+        int world = perms % 10;
+
+        if (user < 6 || user > 7) {
+            System.out.println("Invalid user octal: " + user);
+            return;
+        }
+        if (group < 0 || group > 7) {
+            System.out.println("Invalid group octal: " + group);
+            return;
+        }
+        if (world < 0 || world > 7) {
+            System.out.println("Invalid world octal:" + world);
+            return;
+        }
+
+        FTPFile[] files;
+        FTPFile found = null;
+        try {
+            files = ftp.listFiles(filename);
+            for (FTPFile f : files) {
+                if (f.getName().equals(filename)) {
+                    if (user == 7) {
+                        f.setPermission(FTPFile.USER_ACCESS, FTPFile.EXECUTE_PERMISSION, true);
+                    }
+                    else {
+                        f.setPermission(FTPFile.USER_ACCESS, FTPFile.EXECUTE_PERMISSION, false);
+                    }
+
+                    f.setPermission(FTPFile.GROUP_ACCESS, FTPFile.READ_PERMISSION, (group >>> 2 == 1));
+                    f.setPermission(FTPFile.GROUP_ACCESS, FTPFile.WRITE_PERMISSION,(((group & 0b11) >>> 1) == 1));
+                    f.setPermission(FTPFile.GROUP_ACCESS, FTPFile.EXECUTE_PERMISSION, ((group & 0b1) == 1));
+
+                    f.setPermission(FTPFile.WORLD_ACCESS, FTPFile.READ_PERMISSION, (group >>> 2 == 1));
+                    f.setPermission(FTPFile.WORLD_ACCESS, FTPFile.WRITE_PERMISSION,(((group & 0b11) >>> 1) == 1 ));
+                    f.setPermission(FTPFile.WORLD_ACCESS, FTPFile.EXECUTE_PERMISSION, ((group & 0b1) == 1));
+
+                    found = f;
+                }
+            }
+
+        } catch (IOException e) {
+            System.out.println("Error retrieving file");
+        }
+
+        if (found != null) {
+            System.out.println("New permissions:");
+            System.out.println(found.toFormattedString());
+        } else {
+            System.out.println("File not found");
+        }
+    }
+
     /**
      * Perform logoff and disconnect functions
      */

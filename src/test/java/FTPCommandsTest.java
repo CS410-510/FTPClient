@@ -363,4 +363,22 @@ public class FTPCommandsTest {
 
         assertNull("'" + testfile.getName() + "' was deleted", presult);
     }
+
+    @Test
+    public void testModifyPermissions() throws Exception {
+        File testfile = makeTestFile("for_permissions");
+        commands.putRemoteFile(ftp, testfile.getPath());
+        commands.changeRemotePermissions(ftp, "777", testfile.getName());
+        commands.changeRemotePermissions(ftp, "766", testfile.getName());
+        commands.changeRemotePermissions(ftp, "655", testfile.getName());
+        commands.changeRemotePermissions(ftp, "644", testfile.getName());
+        commands.changeRemotePermissions(ftp, "633", testfile.getName());
+        commands.changeRemotePermissions(ftp, "722", testfile.getName());
+        commands.changeRemotePermissions(ftp, "611", testfile.getName());
+        commands.changeRemotePermissions(ftp, "700", testfile.getName());
+        commands.changeRemotePermissions(ftp, "banana", testfile.getName());
+        commands.changeRemotePermissions(ftp, "800", testfile.getName());
+        commands.changeRemotePermissions(ftp, "500", testfile.getName());
+        commands.deleteRemoteFile(ftp, testfile.getName());
+    }
 }
