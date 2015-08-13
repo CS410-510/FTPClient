@@ -1,5 +1,4 @@
 import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.*;
@@ -18,33 +17,6 @@ public class FTPCommands {
     public FTPCommands() {}
 
     /**
-     * Handles connection to the specified FTP server. Will check
-     * server to see if user is still logged in. If not, will
-     * request access credentials
-     */
-    public void connect(FTPClient ftp, String server) {
-
-        int port = 21;
-        Console console = System.console();
-        String username = console.readLine("Enter username: ");
-        String password = new String(console.readPassword("Enter password: "));
-
-        try {
-            ftp.connect(server, port);
-            ftp.login(username, password);
-            ftp.enterLocalPassiveMode();
-            ftp.setFileType(FTP.BINARY_FILE_TYPE);
-        }
-        catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
-            //e.printStackTrace();
-            exit(ftp);
-        }
-    }
-
-    /**
-     * Overloading for FTPSession conversion
-     *
      * Handles connection to the specified FTP server. Will check
      * server to see if user is still logged in. If not, will
      * request access credentials
@@ -69,29 +41,7 @@ public class FTPCommands {
         }
     }
 
-
     /**
-     * Lists files and folders using the Apache method
-     * listFiles and checks to see if there's a folder in there
-     * somewhere too.
-     */
-    public void listRemoteWorkingDir(FTPClient ftp) {
-
-        // list files
-        FTPFile[] files = new FTPFile[0];
-        try {
-            files = ftp.listFiles();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // Using File Lister to prettify directory contents.
-        System.out.println(FileLister.getInstance().listFilesAndDirs(files));
-    }
-
-    /**
-     * Overloaded for FTPSession conversion
-     *
      * Lists files and folders using the Apache method
      * listFiles and checks to see if there's a folder in there
      * somewhere too.
@@ -122,29 +72,9 @@ public class FTPCommands {
 
     /**
      * Get a file from the remote server and place it in the current local working directory.
-     * The location where the retrieved file ends up can be changed if needed. Maybe we could
-     * provide the option to specify a location.
-     */
-    public void getRemoteFile(FTPClient ftp, String filepath) {
-
-        File file = new File(filepath);
-
-        try (OutputStream dest = new FileOutputStream(file)) {
-            ftp.retrieveFile(file.getName(), dest);
-            System.out.println(file.getName() + " has been placed in your current working directory");
-        } catch (IOException e) {
-            System.out.println("Error retrieving file");
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Overloaded for FTPSession conversion, modified to use FTPSession's current local
-     * working directory versus the system's.
      *
-     * Get a file from the remote server and place it in the current local working directory.
-     * The location where the retrieved file ends up can be changed if needed. Maybe we could
-     * provide the option to specify a location.
+     * @param ftp Assuming a connection
+     * @param filepath Input from cmd line
      */
     public void getRemoteFile(FTPSession ftp, String filepath) {
 
@@ -163,13 +93,13 @@ public class FTPCommands {
         }
     }
 
-    public void getRemoteFile(FTPClient ftp, String... files) {
-            for (String path : files) {
-                    getRemoteFile(ftp, path);
-            }
-        }
-
-    /** Overloaded for FTPSession conversion. */
+    /**
+     * Overloaded for FTPSession conversion
+     *
+     * @param ftp Assuming a connection
+     * @param files Input from cmd line
+     *
+     * */
     public void getRemoteFile(FTPSession ftp, String... files) {
         for (String path : files) {
             getRemoteFile(ftp, path);
@@ -177,29 +107,6 @@ public class FTPCommands {
     }
 
     /**
-     * Put a file from working directory to the remote server
-     *
-     * @param ftp connection assumed
-     * @param filepath argument passed in from command line
-     */
-    public void putRemoteFile(FTPClient ftp, String filepath) {
-        // Switched to using File for work instead of filename string.
-        // Avoids failure when string provided is a full path.
-        File file = new File(filepath);
-
-        // Switched to try-with-resources, autocloses when done w/ stream
-        try (InputStream local = new FileInputStream(file)) {
-            // TODO: Silent overwrite if file already exists on server. Maybe change later?
-            ftp.storeFile(file.getName(), local);
-            System.out.println(file.getName() + " upload complete");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Overloaded for FTPSession conversion.
-     *
      * Put a file from working directory to the remote server
      *
      * @param ftp connection assumed
@@ -227,21 +134,6 @@ public class FTPCommands {
      * @param ftp connection assumed
      * @param filepaths argument array passed in from command line
      */
-    public void putRemoteFile(FTPClient ftp, String... filepaths) {
-        for (String path : filepaths) {
-            putRemoteFile(ftp, path);
-        }
-    }
-
-    /**
-     * Overloaded for FTPSession conversion.
-     *
-     * Wrapper for putRemoteFile that allows for putting multiple files
-     * given a String array of filepaths.
-     *
-     * @param ftp connection assumed
-     * @param filepaths argument array passed in from command line
-     */
     public void putRemoteFile(FTPSession ftp, String... filepaths) {
         for (String path : filepaths) {
             putRemoteFile(ftp, path);
@@ -249,29 +141,6 @@ public class FTPCommands {
     }
 
     /**
-     * Create the specified directory on the FTP server. Some ftp servers
-     * do not understand complex paths, so this command will not create all
-     * the nonexistent sub-directories on the way to the target directory. This
-     * command should be used to create all non-existing sub-directories one by
-     * one before attempting to reference the target directory with a relative
-     * path.
-     *
-     * @param ftp connection assumed
-     * @param path argument passed from command line
-     */
-    public void createRemoteDirectory(FTPClient ftp, String path) {
-        try {
-            ftp.makeDirectory(path);
-        } catch (IOException e) {
-            System.out.println();
-            e.printStackTrace();
-        }
-        System.out.println("'" + path + "' was created");
-    }
-
-    /**
-     * Overloaded for FTPSession conversion
-     *
      * Create the specified directory on the FTP server. Some ftp servers
      * do not understand complex paths, so this command will not create all
      * the nonexistent sub-directories on the way to the target directory. This
@@ -313,24 +182,67 @@ public class FTPCommands {
 
     }
 
+
     /**
-     * Perform logoff and disconnect functions
+     * Changes a remote file's permissions to that represented by the unix-style
+     * octal. Note that the user's read or write access can't be modified.
+     *
+     * @param ftp connection assumed
+     * @param args from command line, first arg is a parseable octal, and second
+     *             arg is a filename.
      */
-    public void exit(FTPClient ftp) {
+    public void changeRemotePermissions(FTPSession ftp, String... args) {
+        if (args.length != 2) {
+            System.out.println("Invalid number of args provided");
+            return;
+        }
+
+        String octal = args[0];
+        String filename = args[1];
+
+        int perms;
+        try {
+            perms = Integer.parseInt(octal);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid permission octal: " + octal);
+            return;
+        }
+
+        // Break up the parsed octal by access level.
+        int user = perms / 100;
+        int group = (perms % 100) / 10;
+        int world = perms % 10;
+
+        // Make sure our octal is good before sending.
+        if (user < 6 || user > 7) {
+            System.out.println("Invalid user octal: " + user);
+            return;
+        }
+        if (group < 0 || group > 7) {
+            System.out.println("Invalid group octal: " + group);
+            return;
+        }
+        if (world < 0 || world > 7) {
+            System.out.println("Invalid world octal:" + world);
+            return;
+        }
+
+        boolean success = false;
 
         try {
-            if (ftp.isConnected()) {
-                ftp.logout();
-                ftp.disconnect();
-            }
+            success = ftp.sendSiteCommand("chmod " + octal + " " + filename);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error contacting server");
+        }
+
+        if (success) {
+            System.out.println("Permissions modified");
+        } else {
+            System.out.println("Permission modification failed");
         }
     }
 
     /**
-     * Overloaded for FTPSession conversion.
-     *
      * Perform logoff and disconnect functions
      */
     public void exit(FTPSession ftp) {

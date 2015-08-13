@@ -8,7 +8,7 @@ public class ArgParser {
     private static Options options = null;
     private static OptionGroup opsGrp = null;
 
-    public static void initParser() {
+    private static void initParser() {
         parser = new DefaultParser();
         options = new Options();
         opsGrp = new OptionGroup();
@@ -35,6 +35,9 @@ public class ArgParser {
         Option put = Option.builder("p").longOpt("put").required(false).hasArgs().optionalArg(false)
                 .argName("PATHS")
                 .desc("Put file(s).").build();
+        Option modify = Option.builder("m").longOpt("modify").required(false).numberOfArgs(2).optionalArg(false)
+                .argName("OCTAL, PATH")
+                .desc("Modify a file's permissions on the server.").build();
 
         opsGrp.setRequired(false);
         opsGrp.addOption(delete);
@@ -43,6 +46,7 @@ public class ArgParser {
         opsGrp.addOption(put);
         opsGrp.addOption(dir);
         opsGrp.addOption(copy);
+        opsGrp.addOption(modify);
 
         options.addOptionGroup(opsGrp);
         options.addOption(connect);
@@ -53,8 +57,18 @@ public class ArgParser {
 
     }
 
+    /**
+     * The list of command line options entered and any associated arguments
+     *
+     * @param args
+     * @return
+     */
     public static CommandLine parse(String[] args) {
         CommandLine line = null;
+
+        if (parser == null) {
+            initParser();
+        }
 
         try {
             line = parser.parse(options, args);
@@ -62,13 +76,15 @@ public class ArgParser {
         catch(ParseException e) {
             System.out.println("Parse error occurred. " + e.getMessage());
         }
-        catch(NullPointerException e) {
-            System.out.println("No parser exists.");
-        }
 
         return line;
     }
 
+    /**
+     * The command line options accepted by the application
+     *
+     * @return
+     */
     public static Options options() {
         return options;
     }

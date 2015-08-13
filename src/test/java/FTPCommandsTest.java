@@ -18,6 +18,7 @@ import static org.junit.Assert.*;
  *
  * @author Ryan
  * @author Sergio
+ * @author Eric
  */
 public class FTPCommandsTest {
 
@@ -326,6 +327,23 @@ public class FTPCommandsTest {
         assertTrue(FileUtils.readLines(localCopy).contains(message));
     }
 
+    @Test
+    public void testGetRemoteFileGoesToCurrentDirectory() throws Exception {
+        File fileToGrab = new File("test_file.txt");
+        fileToGrab.createNewFile();
+        String localDirectory = ftp.getLocalDirectory();
+
+        // Put the new file on the remote server
+        commands.putRemoteFile(ftp, fileToGrab.getName());
+        // Get the new file and put in on the local server
+        commands.getRemoteFile(ftp, fileToGrab.getName());
+
+        File localGrabbedFile = new File(localDirectory, fileToGrab.getName());
+        localGrabbedFile.deleteOnExit();
+
+        assertTrue(localGrabbedFile.exists());
+    }
+
     /**
      * Confirms that a file currently on the remote server gets
      * deleted.
@@ -344,5 +362,39 @@ public class FTPCommandsTest {
         FTPFile presult = findFileOnRemote(testfile.getName());
 
         assertNull("'" + testfile.getName() + "' was deleted", presult);
+    }
+
+    /**
+     * Tests that file permissions can be modified appropriately.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testModifyPermissions() throws Exception {
+        File testfile = makeTestFile("for_permissions");
+        commands.putRemoteFile(ftp, testfile.getPath());
+        commands.changeRemotePermissions(ftp, "777", testfile.getName());
+        assertTrue(findFileOnRemote(testfile.getName()).toFormattedString().contains("rwxrwxrwx"));
+        commands.changeRemotePermissions(ftp, "766", testfile.getName());
+        assertTrue(findFileOnRemote(testfile.getName()).toFormattedString().contains("rwxrw-rw-"));
+        commands.changeRemotePermissions(ftp, "655", testfile.getName());
+        assertTrue(findFileOnRemote(testfile.getName()).toFormattedString().contains("rw-r-xr-x"));
+        commands.changeRemotePermissions(ftp, "644", testfile.getName());
+        assertTrue(findFileOnRemote(testfile.getName()).toFormattedString().contains("rw-r--r--"));
+        commands.changeRemotePermissions(ftp, "633", testfile.getName());
+        assertTrue(findFileOnRemote(testfile.getName()).toFormattedString().contains("rw--wx-wx"));
+        commands.changeRemotePermissions(ftp, "722", testfile.getName());
+        assertTrue(findFileOnRemote(testfile.getName()).toFormattedString().contains("rwx-w--w-"));
+        commands.changeRemotePermissions(ftp, "611", testfile.getName());
+        assertTrue(findFileOnRemote(testfile.getName()).toFormattedString().contains("rw---x--x"));
+        commands.changeRemotePermissions(ftp, "700", testfile.getName());
+        assertTrue(findFileOnRemote(testfile.getName()).toFormattedString().contains("rwx------"));
+        commands.changeRemotePermissions(ftp, "banana", testfile.getName());
+        assertTrue(findFileOnRemote(testfile.getName()).toFormattedString().contains("rwx------"));
+        commands.changeRemotePermissions(ftp, "800", testfile.getName());
+        assertTrue(findFileOnRemote(testfile.getName()).toFormattedString().contains("rwx------"));
+        commands.changeRemotePermissions(ftp, "500", testfile.getName());
+        assertTrue(findFileOnRemote(testfile.getName()).toFormattedString().contains("rwx------"));
+        commands.deleteRemoteFile(ftp, testfile.getName());
     }
 }
